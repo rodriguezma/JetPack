@@ -21,7 +21,7 @@ struct cuadrado{
 
 
 struct spaceman{
-  float x,y,vx = 5,vy = 5;
+  float x,y,vx,vy;
   cuadrado colbox;
   int lives=3,points=0;
   bool gravity=true;
@@ -78,12 +78,15 @@ struct terreno{
 struct terreno *platforms;
 
 
-void CutSprites()
-{
+
+void CutSprites(){
+	
 	map = esat::SpriteFromFile("./Recursos/Sprites/Map.gif");
 	spsheet = esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
+	
 	player = (struct spaceman*) calloc (1,sizeof(struct spaceman));
-	player -> sprite = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
+	player -> sprite = (esat::SpriteHandle*) calloc (16,sizeof(esat::SpriteHandle));
+	
 	*(player -> sprite) = esat::SubSprite (spsheet,64,96,52,76);
 	*(player -> sprite+1) = esat::SubSprite (spsheet,132,96,52,76);
 	*(player -> sprite+2) = esat::SubSprite (spsheet,204,96,52,76);
@@ -92,53 +95,106 @@ void CutSprites()
 	*(player -> sprite+5) = esat::SubSprite (spsheet,136,188,52,76);
 	*(player -> sprite+6) = esat::SubSprite (spsheet,208,188,52,76);
 	*(player -> sprite+7) = esat::SubSprite (spsheet,276,188,52,76);
+	*(player -> sprite+8) = esat::SubSprite (spsheet,572,100,56,76);
+	*(player -> sprite+9) = esat::SubSprite (spsheet,648,100,56,76);
+	*(player -> sprite+10) = esat::SubSprite (spsheet,720,96,56,76);
+	*(player -> sprite+11) = esat::SubSprite (spsheet,792,96,56,76);
+	*(player -> sprite+12) = esat::SubSprite (spsheet,568,184,56,76);
+	*(player -> sprite+13) = esat::SubSprite (spsheet,644,188,56,76);
+	*(player -> sprite+14) = esat::SubSprite (spsheet,720,184,56,76);
+	*(player -> sprite+15) = esat::SubSprite (spsheet,788,184,56,76);
+	
 	
 }
 
 
-void Init()
-{
+
+void Init(){
+	
 	(player -> x) = 500;
 	(player -> y) = 646;
 	(player -> direction) = 0;
 	player -> vx = 6;
-	player -> vy = 6;
+	player -> vy = 4;
 	
 }
 
 
 
 
-void Player1Control( spaceman *Player)
-{
-	if (esat::IsSpecialKeyPressed(esat::kSpecialKey_Left)){
+void Fly (spaceman *Player, esat::SpecialKey key){
+	
+	if (esat::IsSpecialKeyPressed(key) && 
+	!Player -> gravity && Player -> direction == 0) {
+		Player -> animation = 8;
+		Player -> gravity = true;
+		
+	} else if (esat::IsSpecialKeyPressed(key) && 
+	!Player -> gravity && Player -> direction == 1) {
+		Player -> animation = 12;
+		Player -> gravity = true;
+	}
+	
+	if (Player -> gravity && Player -> animation >= 11 && 
+	Player -> direction == 0) {
+		Player -> animation = 8;
+		
+	}else if (Player -> gravity && Player -> animation >= 15 && 
+	Player -> direction == 1) {
+		Player -> animation = 12;
+	}
+	
+	if (esat::IsSpecialKeyPressed(key) && 
+	Player -> gravity && Player -> y >= 60) {
+		Player -> y -= Player -> vy;
+		++Player -> animation;
+		
+	} else if (Player -> gravity){
+		Player -> y += Player -> vy + 2;
+		++Player -> animation;	
+	}
+	
+	if (Player -> y >= 646 && Player -> gravity) {
+	  Player -> gravity = false;
+		if (Player -> direction == 0) {
+			Player -> animation = 0;
+		} else if (Player -> direction = 1) Player -> animation = 4;
+	}
+
+}
+
+
+
+void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey dir1){
+	
+	if (esat::IsSpecialKeyPressed(dir0)) {
 		Player -> direction = 0;
 		Player -> x -= Player -> vx;
-		if(Player -> x <= -56 ){Player -> x = 1000;}
-		++Player -> animation %= 4;
+		if (Player -> x <= -56 ) {Player -> x = 1000;}
+		if (!Player -> gravity) ++Player -> animation %= 4;
 		
-	} else if (esat::IsSpecialKeyPressed(esat::kSpecialKey_Right)){
+	} else if (esat::IsSpecialKeyPressed(dir1)) {
 			Player -> direction = 1;
 			Player -> x += Player -> vx;
-			if(Player -> x ==1000){Player -> x = -10;}
-			if (Player -> animation < 3 || Player -> animation >= 7) 
+			if (Player -> x >=1000) {Player -> x = -10;}
+			if ((Player -> animation < 3 || Player -> animation >= 7) && !Player -> gravity) {
 				Player -> animation = 3; 
-			++Player -> animation;
+			}
+			if (!Player -> gravity) ++Player -> animation;
 	}
 	
 }
 
 
-void UpdateFrame()
-{
+
+void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
 	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
 }
 
 
-void FreeSprites()
-{
+void FreeSprites(){
 	free(player);
 	esat::SpriteRelease(spsheet);
 	esat::SpriteRelease(map);
@@ -214,8 +270,8 @@ int esat::main(int argc, char **argv) {
     esat::DrawClear(0,0,0);
     
 	if(game_start){
-		Player1Control(player);
-    
+		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
+    Fly(player,esat::kSpecialKey_Space);
     
 		UpdateFrame();
 	}
