@@ -98,11 +98,11 @@ void CutSprites()
 
 void Init()
 {
-	(player->x) = 500;
-	(player->y) = 646;
-	(player->direction) = 0;
-	player->vx = 5;
-	player -> vy = 5;
+	(player -> x) = 500;
+	(player -> y) = 646;
+	(player -> direction) = 0;
+	player -> vx = 6;
+	player -> vy = 6;
 	
 }
 
@@ -118,10 +118,12 @@ void Player1Control( spaceman *Player)
 		++Player -> animation %= 4;
 		
 	} else if (esat::IsSpecialKeyPressed(esat::kSpecialKey_Right)){
-		Player -> direction = 1;
-		Player -> x += Player -> vx;
-		if(Player -> x ==1000){Player -> x = -10;}
-		++Player -> animation = 4 +4;
+			Player -> direction = 1;
+			Player -> x += Player -> vx;
+			if(Player -> x ==1000){Player -> x = -10;}
+			if (Player -> animation < 3 || Player -> animation >= 7) 
+				Player -> animation = 3; 
+			++Player -> animation;
 	}
 	
 }
