@@ -1,0 +1,333 @@
+
+//////////CAMINAR/////////////
+
+.walkleft1 {
+  background-position: -64px -96px;
+  height: 76px;
+  width: 52px
+}
+
+.walkleft2 {
+  background-position: -132px -96px;
+  height: 76px;
+  width: 52px
+}
+
+.walkleft3 {
+  background-position: -204px -96px;
+  height: 76px;
+  width: 52px
+}
+
+.walkleft4 {
+  background-position: -272px -96px;
+  height: 76px;
+  width: 52px
+}
+
+.walkright1 {
+  background-position: -68px -188px;
+  height: 76px;
+  width: 52px
+}
+
+.walkright2 {
+  background-position: -136px -188px;
+  height: 76px;
+  width: 52px
+}
+
+.walkright3 {
+  background-position: -208px -188px;
+  height: 76px;
+  width: 52px
+}
+
+.walkright4 {
+  background-position: -276px -188px;
+  height: 76px;
+  width: 52px
+}
+
+
+
+
+//////////////VOLAR/////////////////
+
+.flyleft1 {
+  background-position: -572px -100px;
+  height: 76px;
+  width: 56px
+}
+
+.flyleft2 {
+  background-position: -648px -100px;
+  height: 76px;
+  width: 56px
+}
+
+.flyleft3 {
+  background-position: -720px -96px;
+  height: 76px;
+  width: 56px
+}
+
+.flyleft4 {
+  background-position: -792px -96px;
+  height: 76px;
+  width: 56px
+}
+
+.flyright1 {
+  background-position: -568px -184px;
+  height: 76px;
+  width: 56px
+}
+
+.flyright3 {
+  background-position: -644px -188px;
+  height: 76px;
+  width: 56px
+}
+
+.flyright3 {
+  background-position: -720px -184px;
+  height: 76px;
+  width: 56px
+}
+
+.flyright4 {
+  background-position: -788px -184px;
+  height: 76px;
+  width: 56px
+}
+
+
+
+
+/////////////EXPLOSION ENEMIGA///////////////////
+
+.explosion1 {
+  background-position: -408px -220px;
+  height: 56px;
+  width: 84px
+}
+
+.explosion2 {
+  background-position: -408px -160px;
+  height: 56px;
+  width: 84px
+}
+
+.explosion3 {
+  background-position: -408px -100px;
+  height: 56px;
+  width: 84px
+}
+
+
+
+
+////////////ENEMIGOS///////////////
+
+.enemy1.1 {
+  background-position: -740px -324px;
+  height: 40px;
+  width: 56px
+}
+
+.enemy1.2 {
+  background-position: -812px -324px;
+  height: 40px;
+  width: 56px
+}
+
+
+.enemy2.1 {
+  background-position: -744px -376px;
+  height: 48px;
+  width: 56px
+}
+
+.enemy2.2 {
+  background-position: -816px -376px;
+  height: 48px;
+  width: 56px
+}
+
+
+.enemy3.1 {
+  background-position: -744px -436px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy3.2 {
+  background-position: -816px -432px;
+  height: 52px;
+  width: 52px
+}
+
+
+.enemy4 {
+  background-position: -744px -512px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy5 {
+  background-position: -744px -556px;
+  height: 32px;
+  width: 52px
+}
+
+.enemy6 {
+  background-position: -744px -608px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy7 {
+  background-position: -744px -668px;
+  height: 48px;
+  width: 52px
+}
+
+.enemy8 {
+  background-position: -744px -736px;
+  height: 48px;
+  width: 52px
+}
+
+
+
+
+////////////////ITEMS/////////////////////
+
+.fuel {
+  background-position: -68px -320px;
+  height: 36px;
+  width: 52px
+}
+
+.gema {
+  background-position: -68px -380px;
+  height: 44px;
+  width: 44px
+}
+
+.bola {
+  background-position: -60px -444px;
+  height: 32px;
+  width: 52px
+}
+
+.lingotes {
+  background-position: -60px -504px;
+  height: 28px;
+  width: 52px
+}
+
+.triangulo {
+  background-position: -60px -564px;
+  height: 44px;
+  width: 52px
+}
+
+.radiactivo {
+  background-position: -60px -632px;
+  height: 40px;
+  width: 52px
+}
+
+
+
+
+////////////////NAVE/////////////////
+
+.cabeza.nave1 {
+  background-position: -236px -420px;
+  height: 52px;
+  width: 56px
+}
+
+.cuerpo.nave1 {
+  background-position: -236px -488px;
+  height: 52px;
+  width: 56px
+}
+
+.base.nave1 {
+  background-position: -236px -556px;
+  height: 52px;
+  width: 56px
+}
+
+
+.cabeza.nave2 {
+  background-position: -332px -420px;
+  height: 52px;
+  width: 56px
+}
+
+.cuerpo.nave2 {
+  background-position: -336px -488px;
+  height: 52px;
+  width: 56px
+}
+
+.base.nave2 {
+  background-position: -332px -556px;
+  height: 52px;
+  width: 56px
+}
+
+
+.cabeza.nave3 {
+  background-position: -456px -420px;
+  height: 52px;
+  width: 56px
+}
+
+.cuerpo.nave3 {
+  background-position: -456px -492px;
+  height: 52px;
+  width: 56px
+}
+
+.base.nave3 {
+  background-position: -456px -560px;
+  height: 52px;
+  width: 56px
+}
+
+
+.cabeza.nave4 {
+  background-position: -584px -420px;
+  height: 52px;
+  width: 56px
+}
+
+.cuerpo.nave4 {
+  background-position: -584px -488px;
+  height: 52px;
+  width: 56px
+}
+
+.base.nave4 {
+  background-position: -584px -556px;
+  height: 52px;
+  width: 56px
+}
+
+.turbo1 {
+  background-position: -348px -636px;
+  height: 52px;
+  width: 56px
+}
+
+.turbo2 {
+  background-position: -436px -636px;
+  height: 52px;
+  width: 56px
+}
