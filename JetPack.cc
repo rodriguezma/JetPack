@@ -9,6 +9,9 @@
 esat::SpriteHandle map,spsheet;
 esat::SpriteHandle *player;
 
+int op_menu=1;
+bool multiplayer=false, game_start=false;
+
 const int windowx=1000,windowy=750;
 
 struct unit{
@@ -143,6 +146,66 @@ void Shot(){
 	}
 }
 
+void Menu(){
+
+  esat::DrawSetTextSize(100);
+  esat::DrawSetFillColor(255,255,255);
+  esat::DrawText(150,100,"JetPac Game Selection");
+  esat::DrawSetTextSize(50);
+
+  if(op_menu==1){
+    esat::DrawSetFillColor(158,55,249);
+  }else{
+    esat::DrawSetFillColor(255,255,255);
+  }
+  esat::DrawText(250,250,"1");
+  esat::DrawText(400,250,"1 PLAYER GAME");
+
+  if(op_menu==2){
+    esat::DrawSetFillColor(158,55,249);
+  }else{
+    esat::DrawSetFillColor(255,255,255);
+  }
+  esat::DrawText(250,400,"2");
+  esat::DrawText(400,400,"2 PLAYERS GAME");
+
+  esat::DrawSetFillColor(255,255,255);
+  esat::DrawText(250,550,"5");
+  esat::DrawText(400,550,"START GAME");
+
+  esat::DrawSetTextSize(40);
+  esat::DrawText(300,700,"1983");
+  esat::DrawText(400,700," A.C.G");
+  esat::DrawText(500,700,"ALL RIGHTS RESERVED");
+
+  if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_1) || esat::IsKeyDown('1')){
+    op_menu=1;
+  }if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_2) || esat::IsKeyDown('2')){
+    op_menu=2;
+  }if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_5) || esat::IsKeyDown('5')){
+    game_start=true;
+    if(op_menu==2){
+      multiplayer=true;
+    }
+  }
+  
+}
+
+void Interface(){
+
+  esat::DrawSetTextSize(40);
+  esat::DrawSetFillColor(255,255,0);
+
+  esat::DrawText(100,70,"000000");
+  esat::DrawText(465,70,"000000");
+  esat::DrawText(845,70,"000000");
+
+  esat::DrawSetFillColor(255,255,255);
+  esat::DrawText(252,34,"0");
+  esat::DrawText(730,34,"0");
+
+}
+
 int esat::main(int argc, char **argv) {
  
   double current_time,last_time;
@@ -158,14 +221,22 @@ int esat::main(int argc, char **argv) {
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
 	
+	if(!game_start){
+		Menu();
+	}
+	
 	esat::DrawBegin();
     esat::DrawClear(0,0,0);
     
+	if(game_start){
 		Player1Control(&Pack1);
 		PlayerMov(&Pack1);
-    
-    
+
+
 		UpdateFrame();
+		Interface();
+	}
+	
 		
     esat::DrawEnd();
 	
