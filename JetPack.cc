@@ -7,89 +7,121 @@
 #include <stdlib.h>
 
 esat::SpriteHandle map,spsheet;
-esat::SpriteHandle *player;
 
-int op_menu=1;
+int levelenemy,levelrocket;  // Tipo de enemigos por nivel
+
+int op=1;
 bool multiplayer=false, game_start=false;
 
 const int windowx=1000,windowy=750;
 
-struct unit{
-  float x,y;
-  int v;
-  int tipe;
-  bool alive;
-	esat::SpriteHandle *sprite;
-	char dir = 0;
-	char anim;
+struct cuadrado{
+  float x1,x2,y1,y2;
 };
 
- unit Pack1;
+
+struct spaceman{
+  float x,y,vx = 5,vy = 5;
+  cuadrado colbox;
+  int lives=3,points=0;
+  bool gravity=true;
+  esat::SpriteHandle *sprite;
+  char direction=0;
+  char animation;
+};
+struct spaceman *player;
+
+
+struct disparos{
+  float x,y;
+  cuadrado colbox;
+  int width,v;
+	
+};
+struct disparos *shots;
+
+
+struct enemigos{
+  float x,y;
+  cuadrado colbox;
+  int points;
+  bool alive=true;
+  esat::SpriteHandle *sprite;
+  char direction=0;
+  char animation;
+};
+struct enemigos *enemys;
+
+
+struct nave{
+  float x,y;
+  cuadrado colbox;
+  char pickup,fuel=0,piece;
+  esat::SpriteHandle sprite;
+};
+struct nave *rocket;
+
+
+struct objetos{
+  float x,y;
+  cuadrado colbox;
+  int points;
+  char pickup;
+  esat::SpriteHandle sprite;
+};
+struct objetos *objects;
+
+
+struct terreno{
+  cuadrado colbox;
+};
+struct terreno *platforms;
+
 
 void CutSprites()
 {
 	map = esat::SpriteFromFile("./Recursos/Sprites/Map.gif");
 	spsheet = esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
-	
-	player = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
-	*player = esat::SubSprite (spsheet,64,96,52,76);
-	*(player+1) = esat::SubSprite (spsheet,132,96,52,76);
-	*(player+2) = esat::SubSprite (spsheet,204,96,52,76);
-	*(player+3) = esat::SubSprite (spsheet,272,96,52,76);
-	*(player+4) = esat::SubSprite (spsheet,68,188,52,76);
-	*(player+5) = esat::SubSprite (spsheet,136,188,52,76);
-	*(player+6) = esat::SubSprite (spsheet,208,188,52,76);
-	*(player+7) = esat::SubSprite (spsheet,276,188,52,76);
+	player = (struct spaceman*) calloc (1,sizeof(struct spaceman));
+	player -> sprite = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
+	*(player -> sprite) = esat::SubSprite (spsheet,64,96,52,76);
+	*(player -> sprite+1) = esat::SubSprite (spsheet,132,96,52,76);
+	*(player -> sprite+2) = esat::SubSprite (spsheet,204,96,52,76);
+	*(player -> sprite+3) = esat::SubSprite (spsheet,272,96,52,76);
+	*(player -> sprite+4) = esat::SubSprite (spsheet,68,188,52,76);
+	*(player -> sprite+5) = esat::SubSprite (spsheet,136,188,52,76);
+	*(player -> sprite+6) = esat::SubSprite (spsheet,208,188,52,76);
+	*(player -> sprite+7) = esat::SubSprite (spsheet,276,188,52,76);
 	
 }
 
 
 void Init()
 {
-	Pack1.sprite = (esat::SpriteHandle*) calloc (4,sizeof(esat::SpriteHandle));
-	Pack1.x = 500;
-	Pack1.y = 646;
-	Pack1.dir = 0;
+	(player->x) = 500;
+	(player->y) = 646;
+	(player->direction) = 0;
+	player->vx = 5;
+	player -> vy = 5;
 	
 }
 
 
-void PlayerMov( unit *Player)
-{
-	switch(Player -> dir){
-		
-		case 0:
-			*(Player -> sprite) = *player;
-			*(Player -> sprite+1) = *(player+1);
-			*(Player -> sprite+2) = *(player+2);
-			*(Player -> sprite+3) = *(player+3);
-			break;
-			
-		case 1:
-			*(Player -> sprite) = *(player+4);
-			*(Player -> sprite+1) = *(player+5);
-			*(Player -> sprite+2) = *(player+6);
-			*(Player -> sprite+3) = *(player+7);
-			break;
-		
-	}
-	
-}
 
 
-void Player1Control( unit *Player)
+void Player1Control( spaceman *Player)
 {
 	if (esat::IsSpecialKeyPressed(esat::kSpecialKey_Left)){
-		Player -> dir = 0;
-		Player -> x -= 5;
+		Player -> direction = 0;
+		Player -> x -= Player -> vx;
 		if(Player -> x <= -56 ){Player -> x = 1000;}
-		++Player -> anim %= 4;
+		++Player -> animation %= 4;
 		
 	} else if (esat::IsSpecialKeyPressed(esat::kSpecialKey_Right)){
-		Player -> dir = 1;
-		Player -> x += 5;
+		Player -> direction = 1;
+		Player -> x += Player -> vx;
 		if(Player -> x ==1000){Player -> x = -10;}
-		++Player -> anim %= 4;
+		++Player -> animation = 4 +4;
 	}
 	
 }
@@ -98,52 +130,17 @@ void Player1Control( unit *Player)
 void UpdateFrame()
 {
 	esat::DrawSprite(map,0,0);
-	esat::DrawSprite(*(Pack1.sprite + Pack1.anim) , Pack1.x, Pack1.y);
+	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
 }
 
 
 void FreeSprites()
 {
-	free(Pack1.sprite);
 	free(player);
 	esat::SpriteRelease(spsheet);
 	esat::SpriteRelease(map);
 	
-	
-	
-}
-
-void Colition( cuadrado colbox1, cuadrado colbox2){
-	
-	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
-		return false;
-	else if(colbox1.y2 < colbox2.y1 || colbox1.y1 > colbox2.y2)
-		return false;
-	else{
-		return true;
-	}
-}	
-
-void Shot(){
-	disparos *auxshots = NULL;
-	
-	if(esat::IsSpecialKeyDown(kSpecialKey_Space)){
-		
-		nShots++;
-		shots = (disparos*)realloc(shots,sizeof(disparos)*nShots);
-		
-		auxshots = shots + nShots - 1;
-
-		(*auxshots).x = (*player).x;
-		(*auxshots).y = (*player).y;
-		(*auxshots).direction = (*player).direction;
-		(*auxshots).colbox.x1 = (*auxshots).x;
-		(*auxshots).colbox.y1 = (*auxshots).y;
-		(*auxshots).colbox.x2 = (*auxshots).x + 50;
-		(*auxshots).colbox.y2 = (*auxshots).y + 5;
-		
-	}
 }
 
 void Menu(){
@@ -153,7 +150,7 @@ void Menu(){
   esat::DrawText(150,100,"JetPac Game Selection");
   esat::DrawSetTextSize(50);
 
-  if(op_menu==1){
+  if(op==1){
     esat::DrawSetFillColor(158,55,249);
   }else{
     esat::DrawSetFillColor(255,255,255);
@@ -161,7 +158,7 @@ void Menu(){
   esat::DrawText(250,250,"1");
   esat::DrawText(400,250,"1 PLAYER GAME");
 
-  if(op_menu==2){
+  if(op==2){
     esat::DrawSetFillColor(158,55,249);
   }else{
     esat::DrawSetFillColor(255,255,255);
@@ -179,31 +176,16 @@ void Menu(){
   esat::DrawText(500,700,"ALL RIGHTS RESERVED");
 
   if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_1) || esat::IsKeyDown('1')){
-    op_menu=1;
+    op=1;
   }if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_2) || esat::IsKeyDown('2')){
-    op_menu=2;
+    op=2;
   }if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_5) || esat::IsKeyDown('5')){
     game_start=true;
-    if(op_menu==2){
+    if(op==2){
       multiplayer=true;
     }
   }
   
-}
-
-void Interface(){
-
-  esat::DrawSetTextSize(40);
-  esat::DrawSetFillColor(255,255,0);
-
-  esat::DrawText(100,70,"000000");
-  esat::DrawText(465,70,"000000");
-  esat::DrawText(845,70,"000000");
-
-  esat::DrawSetFillColor(255,255,255);
-  esat::DrawText(252,34,"0");
-  esat::DrawText(730,34,"0");
-
 }
 
 int esat::main(int argc, char **argv) {
@@ -214,13 +196,14 @@ int esat::main(int argc, char **argv) {
 	
   esat::WindowInit(windowx,windowy);
   WindowSetMouseVisibility(true);
+  esat::DrawSetTextFont("Recursos/fonts/Pixelopolis 9000.ttf");
   
 	CutSprites();
 	Init();
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
-	
+
 	if(!game_start){
 		Menu();
 	}
@@ -229,14 +212,11 @@ int esat::main(int argc, char **argv) {
     esat::DrawClear(0,0,0);
     
 	if(game_start){
-		Player1Control(&Pack1);
-		PlayerMov(&Pack1);
-
-
+		Player1Control(player);
+    
+    
 		UpdateFrame();
-		Interface();
 	}
-	
 		
     esat::DrawEnd();
 	
