@@ -150,6 +150,7 @@ void Menu(){
 
   esat::DrawSetTextSize(100);
   esat::DrawSetFillColor(255,255,255);
+  esat::DrawText(150,100,"JetPac Game Selection");
   esat::DrawSetTextSize(50);
 
   if(op_menu==1){
