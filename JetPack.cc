@@ -320,6 +320,7 @@ void UpdateFrame(){
 			}
 		}
 	}
+	DrawShoots();
 	
 }
 
@@ -413,7 +414,7 @@ int esat::main(int argc, char **argv) {
 		}
 		++time_;
 		UpdateFrame();
-		DrawShoots();
+		
 	}
 		
     esat::DrawEnd();
