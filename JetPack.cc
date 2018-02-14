@@ -82,29 +82,46 @@ struct terreno *platforms;
 void CutSprites(){
 	
 	map = esat::SpriteFromFile("./Recursos/Sprites/Map.gif");
-	spsheet = esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
-	
-	player = (struct spaceman*) calloc (1,sizeof(struct spaceman));
-	player -> sprite = (esat::SpriteHandle*) calloc (16,sizeof(esat::SpriteHandle));
-	
-	*(player -> sprite) = esat::SubSprite (spsheet,64,96,52,76);
-	*(player -> sprite+1) = esat::SubSprite (spsheet,132,96,52,76);
-	*(player -> sprite+2) = esat::SubSprite (spsheet,204,96,52,76);
-	*(player -> sprite+3) = esat::SubSprite (spsheet,272,96,52,76);
-	*(player -> sprite+4) = esat::SubSprite (spsheet,68,188,52,76);
-	*(player -> sprite+5) = esat::SubSprite (spsheet,136,188,52,76);
-	*(player -> sprite+6) = esat::SubSprite (spsheet,208,188,52,76);
-	*(player -> sprite+7) = esat::SubSprite (spsheet,276,188,52,76);
-	*(player -> sprite+8) = esat::SubSprite (spsheet,572,100,56,76);
-	*(player -> sprite+9) = esat::SubSprite (spsheet,648,100,56,76);
-	*(player -> sprite+10) = esat::SubSprite (spsheet,720,96,56,76);
-	*(player -> sprite+11) = esat::SubSprite (spsheet,792,96,56,76);
-	*(player -> sprite+12) = esat::SubSprite (spsheet,568,184,56,76);
-	*(player -> sprite+13) = esat::SubSprite (spsheet,644,188,56,76);
-	*(player -> sprite+14) = esat::SubSprite (spsheet,720,184,56,76);
-	*(player -> sprite+15) = esat::SubSprite (spsheet,788,184,56,76);
-	
-	
+	spsheet=esat::SpriteFromFile("./recursos/sprites/SpriteGeneral.jpg");
+  
+  // MAIN CHARACTER SPRITES
+  player=(struct spaceman*)calloc(1,sizeof(struct spaceman));
+  player->sprite=(esat::SpriteHandle*)malloc(16*sizeof(esat::SpriteHandle));
+  //Walk animation
+  player->sprite[0]=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
+  player->sprite[1]=esat::SubSprite(spsheet,132,96,52,76);
+  player->sprite[2]=esat::SubSprite(spsheet,204,96,52,76);
+  player->sprite[3]=esat::SubSprite(spsheet,272,96,52,76);
+  player->sprite[4]=esat::SubSprite(spsheet,68,188,52,76); //DERECHA
+  player->sprite[5]=esat::SubSprite(spsheet,136,188,52,76);
+  player->sprite[6]=esat::SubSprite(spsheet,208,188,52,76);
+  player->sprite[7]=esat::SubSprite(spsheet,276,188,52,76);
+  //JetPac animation
+  player->sprite[8]=esat::SubSprite(spsheet,572,100,56,76); //IZQUIERDA
+  player->sprite[9]=esat::SubSprite(spsheet,648,100,56,76);
+  player->sprite[10]=esat::SubSprite(spsheet,720,96,56,76);
+  player->sprite[11]=esat::SubSprite(spsheet,792,96,56,76);
+  player->sprite[12]=esat::SubSprite(spsheet,568,184,56,76); //DERECHA
+  player->sprite[13]=esat::SubSprite(spsheet,644,188,56,76);
+  player->sprite[14]=esat::SubSprite(spsheet,720,184,56,76);
+  player->sprite[15]=esat::SubSprite(spsheet,788,184,56,76);
+  
+  // EXPLOSION SPRITES
+  explode=(esat::SpriteHandle*)malloc(3*sizeof(esat::SpriteHandle));
+  
+  explode[0]=esat::SubSprite(spsheet,408,220,84,56); //GRANDE
+  explode[1]=esat::SubSprite(spsheet,408,160,84,56); //MEDIANA
+  explode[2]=esat::SubSprite(spsheet,408,100,84,56); //PEQUEÑA
+  
+  // objects SPRITES
+  objects=(esat::SpriteHandle*)malloc(6*sizeof(esat::SpriteHandle));
+  
+  objects[0].sprite=esat::SubSprite(spsheet,68,320,52,36); //FUEL
+  objects[1].sprite=esat::SubSprite(spsheet,68,380,44,44); //GEMA
+  objects[2].sprite=esat::SubSprite(spsheet,60,444,52,32); //BOLA
+  objects[3].sprite=esat::SubSprite(spsheet,60,504,52,28); //LINGOTES
+  objects[4].sprite=esat::SubSprite(spsheet,60,564,52,44); //TRIANGULO
+  objects[5].sprite=esat::SubSprite(spsheet,60,632,52,40); //RADIACTIVO
 }
 
 
