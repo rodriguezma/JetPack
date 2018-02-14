@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-esat::SpriteHandle map,spsheet;
+esat::SpriteHandle map,spsheet,*explode;
 
 int levelenemy,levelrocket;  // Tipo de enemigos por nivel
 
@@ -82,20 +82,20 @@ struct terreno *platforms;
 void CutSprites(){
 	
 	map = esat::SpriteFromFile("./Recursos/Sprites/Map.gif");
-	spsheet=esat::SpriteFromFile("./recursos/sprites/SpriteGeneral.jpg");
+	spsheet=esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
   
   // MAIN CHARACTER SPRITES
   player=(struct spaceman*)calloc(1,sizeof(struct spaceman));
   player->sprite=(esat::SpriteHandle*)malloc(16*sizeof(esat::SpriteHandle));
   //Walk animation
-  player->sprite[0]=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
-  player->sprite[1]=esat::SubSprite(spsheet,132,96,52,76);
-  player->sprite[2]=esat::SubSprite(spsheet,204,96,52,76);
-  player->sprite[3]=esat::SubSprite(spsheet,272,96,52,76);
-  player->sprite[4]=esat::SubSprite(spsheet,68,188,52,76); //DERECHA
-  player->sprite[5]=esat::SubSprite(spsheet,136,188,52,76);
-  player->sprite[6]=esat::SubSprite(spsheet,208,188,52,76);
-  player->sprite[7]=esat::SubSprite(spsheet,276,188,52,76);
+  *(player->sprite)=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
+  *(player->sprite+1)=esat::SubSprite(spsheet,132,96,52,76);
+  *(player->sprite+2)=esat::SubSprite(spsheet,204,96,52,76);
+  *(player->sprite+3)=esat::SubSprite(spsheet,272,96,52,76);
+  *(player->sprite+4)=esat::SubSprite(spsheet,68,188,52,76); //DERECHA
+  *(player->sprite+5)=esat::SubSprite(spsheet,136,188,52,76);
+  *(player->sprite+6)=esat::SubSprite(spsheet,208,188,52,76);
+  *(player->sprite+7)=esat::SubSprite(spsheet,276,188,52,76);
   //JetPac animation
   player->sprite[8]=esat::SubSprite(spsheet,572,100,56,76); //IZQUIERDA
   player->sprite[9]=esat::SubSprite(spsheet,648,100,56,76);
@@ -114,7 +114,7 @@ void CutSprites(){
   explode[2]=esat::SubSprite(spsheet,408,100,84,56); //PEQUEÑA
   
   // objects SPRITES
-  objects=(esat::SpriteHandle*)malloc(6*sizeof(esat::SpriteHandle));
+  objects=(struct objetos*)malloc(6*sizeof(struct objetos));
   
   objects[0].sprite=esat::SubSprite(spsheet,68,320,52,36); //FUEL
   objects[1].sprite=esat::SubSprite(spsheet,68,380,44,44); //GEMA
@@ -288,7 +288,7 @@ int esat::main(int argc, char **argv) {
     
 	if(game_start){
 		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
-    Fly(player,esat::kSpecialKey_Space);
+    Fly(player,esat::kSpecialKey_Up);
     
 		UpdateFrame();
 	}
