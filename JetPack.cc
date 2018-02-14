@@ -5,17 +5,17 @@
 #include <esat/time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 esat::SpriteHandle map,spsheet,*explode;
 
 int levelenemy,levelrocket;  // Tipo de enemigos por nivel
-
+int time_=0;
 int op=1;
 bool multiplayer=false, game_start=false;
 
-const int windowx=1000,windowy=750,gravity=2;
+const int windowx=1000,windowy=750;
 
- // STRUCTS
 struct cuadrado{
   float x1,x2,y1,y2;
 };
@@ -64,10 +64,10 @@ struct nave *rocket;
 
 
 struct objetos{
-  float x,y=0;
+  float x,y;
   cuadrado colbox;
   int points;
-  char pickup;
+  char pickup,active=0;
   esat::SpriteHandle sprite;
 };
 struct objetos *objects;
@@ -79,7 +79,9 @@ struct terreno{
 struct terreno *platforms;
 
 
-void CutInitialSprites(){
+
+void CutSprites(){
+	
 	map = esat::SpriteFromFile("./Recursos/Sprites/Map.gif");
 	spsheet=esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
   
@@ -96,14 +98,14 @@ void CutInitialSprites(){
   *(player->sprite+6)=esat::SubSprite(spsheet,208,188,52,76);
   *(player->sprite+7)=esat::SubSprite(spsheet,276,188,52,76);
   //JetPac animation
-  player->sprite[8]=esat::SubSprite(spsheet,572,100,53,74); //IZQUIERDA
-  player->sprite[9]=esat::SubSprite(spsheet,646,100,53,74);
-  player->sprite[10]=esat::SubSprite(spsheet,720,96,53,74);
-  player->sprite[11]=esat::SubSprite(spsheet,792,96,53,74);
-  player->sprite[12]=esat::SubSprite(spsheet,569,185,53,74); //DERECHA
-  player->sprite[13]=esat::SubSprite(spsheet,644,188,53,74);
-  player->sprite[14]=esat::SubSprite(spsheet,719,185,53,74);
-  player->sprite[15]=esat::SubSprite(spsheet,791,185,53,74);
+  player->sprite[8]=esat::SubSprite(spsheet,572,100,56,76); //IZQUIERDA
+  player->sprite[9]=esat::SubSprite(spsheet,648,100,56,76);
+  player->sprite[10]=esat::SubSprite(spsheet,720,96,56,76);
+  player->sprite[11]=esat::SubSprite(spsheet,792,96,56,76);
+  player->sprite[12]=esat::SubSprite(spsheet,568,184,56,76); //DERECHA
+  player->sprite[13]=esat::SubSprite(spsheet,644,188,56,76);
+  player->sprite[14]=esat::SubSprite(spsheet,720,184,56,76);
+  player->sprite[15]=esat::SubSprite(spsheet,788,184,56,76);
   
   // EXPLOSION SPRITES
   explode=(esat::SpriteHandle*)malloc(3*sizeof(esat::SpriteHandle));
@@ -123,32 +125,26 @@ void CutInitialSprites(){
   objects[5].sprite=esat::SubSprite(spsheet,60,632,52,40); //RADIACTIVO
 }
 
-void InitiateSpaceman(){
-	player -> x = 500;
-	player -> y = 646;
-	player -> direction = 0;
+
+
+void Init(){
+	
+	(player -> x) = 500;
+	(player -> y) = 646;
+	(player -> direction) = 0;
 	player -> vx = 6;
 	player -> vy = 4;
+	
+	objects[0].points = 100;
+	objects[1].points = 250;
+	objects[2].points = 250;
+	objects[3].points = 250;
+	objects[4].points = 250;
+	objects[5].points = 250;
 }
 
-void Initiate(){
-  InitiateSpaceman();
-  
-  //PLATAFORMAS
-  platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
-  platforms[0].colbox={125,281,311,311};
-  platforms[1].colbox={469,375,593,405};
-  platforms[2].colbox={750,187,936,218};
-  platforms[3].colbox={0,719,999,749};
-  
-  //OBJETOS
-  objects[0].points=100;
-  objects[1].points=250;
-  objects[2].points=250;
-  objects[3].points=250;
-  objects[4].points=250;
-  objects[5].points=250;
-}
+
+
 
 void Fly (spaceman *Player, esat::SpecialKey key){
 	
@@ -213,17 +209,65 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 	
 }
 
+void ItemSpawn(){
+	int Rand_;
+	Rand_ = rand()%15 + 1;
+	printf("%d",Rand_);
+	switch(Rand_){
+		case 1,2,3,4,5:
+			objects[0].x = rand()%957;
+			objects[0].y = 0;
+			objects[0].active=1;
+			break;
+		case 6,7:
+			objects[1].x = rand()%957;
+			objects[1].y = 0;
+			objects[1].active=1;
+			break;
+		case 8,9:
+			objects[2].x = rand()%957;
+			objects[2].y = 0;
+			objects[2].active=1;
+			break;
+		case 10,11:
+			objects[3].x = rand()%957;
+			objects[3].y = 0;
+			objects[3].active=1;
+			break;
+		case 12,13:
+			objects[4].x = rand()%957;
+			objects[4].y = 0;
+			objects[4].active=1;
+			break;
+		case 14,15:
+			objects[5].x = rand()%957;
+			objects[5].y = 0;
+			objects[5].active=1;
+			break;
+	}
+}
 
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
 	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
+	for(int i=0;i<6;++i){
+		if(objects[i].active==1){
+			esat::DrawSprite(objects[i].sprite,objects[i].x,objects[i].y);
+			if(objects[i].y<=678){
+			objects[i].y += 5;
+			}
+		}
+	}
+	
 }
 
 
 void FreeSprites(){
 	free(player);
+	free(objects);
+	free(explode);
 	esat::SpriteRelease(spsheet);
 	esat::SpriteRelease(map);
 	
@@ -278,14 +322,14 @@ int esat::main(int argc, char **argv) {
  
   double current_time,last_time;
   unsigned char fps=25;
-	
+  srand(time(NULL));
 	
   esat::WindowInit(windowx,windowy);
   WindowSetMouseVisibility(true);
   esat::DrawSetTextFont("Recursos/fonts/Pixelopolis 9000.ttf");
   
-	CutInitialSprites();
-	Initiate();
+	CutSprites();
+	Init();
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
@@ -299,8 +343,13 @@ int esat::main(int argc, char **argv) {
     
 	if(game_start){
 		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
-    Fly(player,esat::kSpecialKey_Up);
+		Fly(player,esat::kSpecialKey_Up);
     
+	if(time_%250==0){
+		ItemSpawn();
+		printf("hola!");
+	}
+		++time_;
 		UpdateFrame();
 	}
 		
