@@ -12,6 +12,7 @@ esat::SpriteHandle map,spsheet,*explode;
 int level=0;  // Tipo de enemigos por nivel
 int time_=0;
 int op=1;
+int current_shots=0;
 bool multiplayer=false, game_start=false;
 
 const int windowx=1000,windowy=750,gravity=2;
@@ -37,6 +38,7 @@ struct disparos{
   float x,y;
   cuadrado colbox;
   int width,v;
+  int direction;
 };
 struct disparos *shots;
 
@@ -148,6 +150,59 @@ void Initiate(){
   objects[5].points=250;
 }
 
+bool Col (cuadrado colbox1, cuadrado colbox2){
+	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
+		return false;
+	else if(colbox1.y2 < colbox2.y1 || colbox1.y1 > colbox2.y2)
+		return false;
+	else{
+		return true;
+	}
+}
+
+void Shot (esat::SpecialKey key){
+	if (esat::IsSpecialKeyDown(key)){
+
+		current_shots++;
+		shots = (disparos*)realloc(shots,sizeof(disparos)*current_shots);
+		disparos *auxshot = shots + (current_shots-1);
+		
+		(*auxshot).direction = (*player).direction;
+		(*auxshot).colbox.x1 = (*player).x;
+		(*auxshot).colbox.y1 = (*player).y;
+		(*auxshot).colbox.x2 = (*auxshot).colbox.x1 + 50;
+		(*auxshot).colbox.y2 = (*auxshot).colbox.y1 + 10;
+
+	}
+}
+
+void ShotsMovement (){
+	disparos *auxshot = shots;
+	
+	for(int i=0;i<current_shots;i++){
+		switch((*auxshot).direction){
+			case 0:
+				(*auxshot).colbox.x1 -=10;
+				(*auxshot).colbox.x2 -=10;
+				break;
+			case 1:
+				(*auxshot).colbox.x1 +=10;
+				(*auxshot).colbox.x2 +=10;
+				break;
+		}
+		auxshot++;
+	}
+}
+
+void DrawShoots (){
+	disparos *auxshot = shots;
+	esat::DrawSetStrokeColor(255,255,255);
+	esat::DrawSetFillColor(255,255,255);
+	for(int i=0;i<current_shots;i++){
+		esat::DrawLine((*auxshot).colbox.x1 , (*auxshot).colbox.y1 + 5, (*auxshot).colbox.x2 , (*auxshot).colbox.y1 + 5);
+		auxshot++;
+	}
+}
 
 
 
@@ -349,13 +404,16 @@ int esat::main(int argc, char **argv) {
 	if(game_start){
 		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
 		Fly(player,esat::kSpecialKey_Up);
-    
-	if(time_%250==0){
-		ItemSpawn();
-		printf("hola!");
-	}
+    	Shot(esat::kSpecialKey_Space);
+    	ShotsMovement();
+    		
+		if(time_%250==0){
+			ItemSpawn();
+			printf("hola!");
+		}
 		++time_;
 		UpdateFrame();
+		DrawShoots();
 	}
 		
     esat::DrawEnd();
