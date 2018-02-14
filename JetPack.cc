@@ -9,12 +9,12 @@
 
 esat::SpriteHandle map,spsheet,*explode;
 
-int levelenemy,levelrocket;  // Tipo de enemigos por nivel
+int level=0;  // Tipo de enemigos por nivel
 int time_=0;
 int op=1;
 bool multiplayer=false, game_start=false;
 
-const int windowx=1000,windowy=750;
+const int windowx=1000,windowy=750,gravity=2;
 
 struct cuadrado{
   float x1,x2,y1,y2;
@@ -37,13 +37,12 @@ struct disparos{
   float x,y;
   cuadrado colbox;
   int width,v;
-	
 };
 struct disparos *shots;
 
 
 struct enemigos{
-  float x,y;
+  float x,y,vx,vy;
   cuadrado colbox;
   int points;
   bool alive=true;
@@ -57,6 +56,7 @@ struct enemigos *enemys;
 struct nave{
   float x,y;
   cuadrado colbox;
+  int points=100;
   char pickup,fuel=0,piece;
   esat::SpriteHandle sprite;
 };
@@ -64,7 +64,7 @@ struct nave *rocket;
 
 
 struct objetos{
-  float x,y;
+  float x,y=0;
   cuadrado colbox;
   int points;
   char pickup,active=0;
@@ -80,13 +80,12 @@ struct terreno *platforms;
 
 
 
-void CutSprites(){
-	
+void CutInitialSprites(){
 	map = esat::SpriteFromFile("./Recursos/Sprites/Map.gif");
 	spsheet=esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
   
   // MAIN CHARACTER SPRITES
-  player=(struct spaceman*)calloc(1,sizeof(struct spaceman));
+  player=(struct spaceman*)malloc(1*sizeof(struct spaceman));
   player->sprite=(esat::SpriteHandle*)malloc(16*sizeof(esat::SpriteHandle));
   //Walk animation
   *(player->sprite)=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
@@ -98,14 +97,14 @@ void CutSprites(){
   *(player->sprite+6)=esat::SubSprite(spsheet,208,188,52,76);
   *(player->sprite+7)=esat::SubSprite(spsheet,276,188,52,76);
   //JetPac animation
-  player->sprite[8]=esat::SubSprite(spsheet,572,100,56,76); //IZQUIERDA
-  player->sprite[9]=esat::SubSprite(spsheet,648,100,56,76);
-  player->sprite[10]=esat::SubSprite(spsheet,720,96,56,76);
-  player->sprite[11]=esat::SubSprite(spsheet,792,96,56,76);
-  player->sprite[12]=esat::SubSprite(spsheet,568,184,56,76); //DERECHA
-  player->sprite[13]=esat::SubSprite(spsheet,644,188,56,76);
-  player->sprite[14]=esat::SubSprite(spsheet,720,184,56,76);
-  player->sprite[15]=esat::SubSprite(spsheet,788,184,56,76);
+  player->sprite[8]=esat::SubSprite(spsheet,572,100,53,74); //IZQUIERDA
+  player->sprite[9]=esat::SubSprite(spsheet,646,100,53,74);
+  player->sprite[10]=esat::SubSprite(spsheet,720,96,53,74);
+  player->sprite[11]=esat::SubSprite(spsheet,792,96,53,74);
+  player->sprite[12]=esat::SubSprite(spsheet,569,185,53,74); //DERECHA
+  player->sprite[13]=esat::SubSprite(spsheet,644,188,53,74);
+  player->sprite[14]=esat::SubSprite(spsheet,719,185,53,74);
+  player->sprite[15]=esat::SubSprite(spsheet,791,185,53,74);
   
   // EXPLOSION SPRITES
   explode=(esat::SpriteHandle*)malloc(3*sizeof(esat::SpriteHandle));
@@ -127,20 +126,26 @@ void CutSprites(){
 
 
 
-void Init(){
-	
-	(player -> x) = 500;
-	(player -> y) = 646;
-	(player -> direction) = 0;
-	player -> vx = 6;
-	player -> vy = 4;
-	
-	objects[0].points = 100;
-	objects[1].points = 250;
-	objects[2].points = 250;
-	objects[3].points = 250;
-	objects[4].points = 250;
-	objects[5].points = 250;
+void Initiate(){
+  player -> x = 500;
+  player -> y = 646;
+  player -> direction = 0;
+  player -> vx = 6;
+  player -> vy = 4;
+  //PLATAFORMAS
+  platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
+  platforms[0].colbox={125,281,311,311};
+  platforms[1].colbox={469,375,593,405};
+  platforms[2].colbox={750,187,936,218};
+  platforms[3].colbox={0,719,999,749};
+  
+  //OBJETOS
+  objects[0].points=100;
+  objects[1].points=250;
+  objects[2].points=250;
+  objects[3].points=250;
+  objects[4].points=250;
+  objects[5].points=250;
 }
 
 
@@ -328,8 +333,8 @@ int esat::main(int argc, char **argv) {
   WindowSetMouseVisibility(true);
   esat::DrawSetTextFont("Recursos/fonts/Pixelopolis 9000.ttf");
   
-	CutSprites();
-	Init();
+	CutInitialSprites();
+	Initiate();
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
