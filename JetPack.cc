@@ -8,9 +8,9 @@
 #include <time.h>
 
 esat::SpriteHandle map,spsheet,*explode;
-esat::SpriteHandle *playerwalk, *playerfly;
+esat::SpriteHandle *playerwalk, *playerfly, *martians;
 
-int level=0;  // Tipo de enemigos por nivel
+int level=1;  // Tipo de enemigos por nivel
 int time_=0;
 int op=1,enemyamount;
 int current_shots=0;
@@ -92,8 +92,11 @@ void CutInitialSprites(){
 	playerfly = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
   player=(struct spaceman*)malloc(1*sizeof(struct spaceman));
   player->sprite=(esat::SpriteHandle*)malloc(4*sizeof(esat::SpriteHandle));
-  //Walk animation
 
+
+  enemys = (struct enemigos*) malloc (6*sizeof(struct enemigos));
+
+  //Walk animation
   *playerwalk=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
   *(playerwalk+1)=esat::SubSprite(spsheet,132,96,52,76);
   *(playerwalk+2)=esat::SubSprite(spsheet,204,96,52,76);
@@ -129,6 +132,22 @@ void CutInitialSprites(){
   objects[3].sprite=esat::SubSprite(spsheet,60,504,52,28); //LINGOTES
   objects[4].sprite=esat::SubSprite(spsheet,60,564,52,44); //TRIANGULO
   objects[5].sprite=esat::SubSprite(spsheet,60,632,52,40); //RADIACTIVO
+
+  // Enemies
+  martians = (esat::SpriteHandle*) calloc (11,sizeof(esat::SpriteHandle));
+  martians[0] = esat::SubSprite(spsheet,740,324,56,40);
+  martians[1] = esat::SubSprite(spsheet,812,324,56,40);
+  martians[2] = esat::SubSprite(spsheet,744,376,56,48),
+  martians[3] = esat::SubSprite(spsheet,816,376,56,48);
+  martians[4] = esat::SubSprite(spsheet,744,436,52,52);
+  martians[5] = esat::SubSprite(spsheet,816,432,52,52);
+  martians[6] = esat::SubSprite(spsheet,744,512,52,28);
+  martians[7] = esat::SubSprite(spsheet,744,556,52,32);
+  martians[8] = esat::SubSprite(spsheet,744,608,52,52);
+  martians[9] = esat::SubSprite(spsheet,744,668,52,48);
+  martians[10] = esat::SubSprite(spsheet,744,736,52,48);
+
+
 }
 
 
@@ -141,7 +160,7 @@ void Initiate(){
   player -> animation = 0;
   player -> vx = 6;
   player -> vy = 4;
-  player -> colbox = {500,553,642,715};
+  player -> colbox = {500,545,642,715};
   //PLATAFORMAS
   platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
   platforms[0].colbox={125,311,281,311};
@@ -169,6 +188,7 @@ void DrawCol(cuadrado colbox){
 	esat::DrawLine(colbox.x1 , colbox.y2 , colbox.x1 , colbox.y1);
 }
 
+
 bool Col (cuadrado colbox1, cuadrado colbox2){
 	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
 		return false;
@@ -187,12 +207,66 @@ bool ColPlatforms(cuadrado colbox){
 
 		if(Col(colbox,platforms[i].colbox))
 			return true;
-
-
 	}
 
 	return false;
 }
+
+
+
+void SelectEnemies(enemigos *martian){
+
+  switch (level){
+
+    case 1:{
+      martian -> sprite = (esat::SpriteHandle*)calloc(2,sizeof(esat::SpriteHandle));
+      *(martian -> sprite) = martians[0];
+      *(martian -> sprite+1) = martians[1];
+    break;
+    }
+
+    case 2:{
+      *(martian -> sprite) = martians[2];
+      *(martian -> sprite+1) = martians[3];
+    break;
+    }
+
+    case 3:{
+      *(martian -> sprite) = martians[4];
+      *(martian -> sprite+1) = martians[5];
+    break;
+    }
+
+    case 4:{
+      martian -> sprite = (esat::SpriteHandle*) realloc (martian->sprite,sizeof(esat::SpriteHandle));
+      *(martian -> sprite) = martians[6];
+    break;
+    }
+
+    case 5:{
+      *(martian -> sprite) = martians[7];
+    break;
+    }
+
+    case 6:{
+      *(martian -> sprite) = martians[8];
+    break;
+    }
+
+    case 7:{
+      *(martian -> sprite) = martians[9];
+    break;
+    }
+
+    case 8:{
+      *(martian -> sprite) = martians[10];
+    break;
+    }
+  }
+
+
+}
+
 
 void Shot (esat::SpecialKey key){
 	if (esat::IsSpecialKeyDown(key)){
@@ -453,6 +527,8 @@ void UpdateFrame(){
 void FreeSprites(){
 	free(playerwalk);
 	free(playerfly);
+  free(martians);
+  free(enemys);
 	free(player);
 	free(objects);
 	free(explode);
