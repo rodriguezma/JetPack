@@ -134,12 +134,13 @@ void Initiate(){
   player -> direction = 0;
   player -> vx = 6;
   player -> vy = 4;
+  player -> colbox = {500,553,646,719};
   //PLATAFORMAS
-  platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
-  platforms[0].colbox={125,281,311,311};
-  platforms[1].colbox={469,375,593,405};
-  platforms[2].colbox={750,187,936,218};
-  platforms[3].colbox={0,719,999,749};
+  platforms=(struct terreno*)malloc(3*sizeof(struct terreno));
+  platforms[0].colbox={125,311,281,311};
+  platforms[1].colbox={469,593,375,405};
+  platforms[2].colbox={750,936,187,218};
+  platforms[3].colbox={0,999,719,749};
   
   //OBJETOS
   objects[0].points=100;
@@ -150,6 +151,17 @@ void Initiate(){
   objects[5].points=250;
 }
 
+void DrawCol(cuadrado colbox){
+	
+	esat::DrawSetStrokeColor(255,255,255);
+	esat::DrawSetFillColor(255,255,255);
+
+	esat::DrawLine(colbox.x1 , colbox.y1 , colbox.x2 , colbox.y1);
+	esat::DrawLine(colbox.x2 , colbox.y1 , colbox.x2 , colbox.y2);
+	esat::DrawLine(colbox.x2 , colbox.y2 , colbox.x1 , colbox.y2);
+	esat::DrawLine(colbox.x1 , colbox.y2 , colbox.x1 , colbox.y1);
+}
+
 bool Col (cuadrado colbox1, cuadrado colbox2){
 	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
 		return false;
@@ -158,6 +170,16 @@ bool Col (cuadrado colbox1, cuadrado colbox2){
 	else{
 		return true;
 	}
+}
+
+bool ColPlatforms(cuadrado colbox){
+	terreno *auxplats = platforms;
+	bool iscolliding;
+	while(auxplats != NULL){
+		iscolliding = Col(colbox,(*auxplats).colbox);
+		auxplats++;
+	}
+	return iscolliding;
 }
 
 void Shot (esat::SpecialKey key){
@@ -206,6 +228,7 @@ void DrawShoots (){
 
 
 
+
 void Fly (spaceman *Player, esat::SpecialKey key){
 	
 	if (esat::IsSpecialKeyPressed(key) && 
@@ -230,12 +253,28 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 	
 	if (esat::IsSpecialKeyPressed(key) && 
 	Player -> gravity && Player -> y >= 60) {
-		Player -> y -= Player -> vy;
-		++Player -> animation;
+		cuadrado auxcolbox = Player -> colbox;
+		auxcolbox.y1 -= Player -> vy;
+		auxcolbox.y2 -= Player -> vy;
+		//if (!ColPlatforms(auxcolbox)){
+			Player -> y -= Player -> vy;
+			Player -> colbox.y1 -= Player -> vy;
+			Player -> colbox.y2 -= Player -> vy;
+			++Player -> animation;
+		//}
+		
 		
 	} else if (Player -> gravity){
-		Player -> y += Player -> vy + 2;
-		++Player -> animation;	
+		cuadrado auxcolbox = Player -> colbox;
+		auxcolbox.y1 += Player -> vy + 2;
+		auxcolbox.y2 += Player -> vy + 2;
+		//if(!ColPlatforms(auxcolbox)){
+			Player -> y += Player -> vy + 2;
+			Player -> colbox.y1 += Player -> vy + 2;
+			Player -> colbox.y2 += Player -> vy + 2;
+			++Player -> animation;	
+		//}
+		
 	}
 	
 	if (Player -> y >= 646 && Player -> gravity) {
@@ -254,12 +293,16 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 	if (esat::IsSpecialKeyPressed(dir0)) {
 		Player -> direction = 0;
 		Player -> x -= Player -> vx;
+		Player -> colbox.x1 -= Player -> vx;
+		Player -> colbox.x2 -= Player -> vx;
 		if (Player -> x <= -56 ) {Player -> x = 1000;}
 		if (!Player -> gravity) ++Player -> animation %= 4;
 		
 	} else if (esat::IsSpecialKeyPressed(dir1)) {
 			Player -> direction = 1;
 			Player -> x += Player -> vx;
+			Player -> colbox.x1 += Player -> vx;
+			Player -> colbox.x2 += Player -> vx;
 			if (Player -> x >=1000) {Player -> x = -10;}
 			if ((Player -> animation < 3 || Player -> animation >= 7) && !Player -> gravity) {
 				Player -> animation = 3; 
@@ -321,6 +364,13 @@ void UpdateFrame(){
 		}
 	}
 	DrawShoots();
+	DrawCol((*player).colbox);
+	DrawCol(platforms[0].colbox);
+	DrawCol(platforms[1].colbox);
+	DrawCol(platforms[2].colbox);
+	DrawCol(platforms[3].colbox);
+
+
 	
 }
 
