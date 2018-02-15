@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+pene;
 esat::SpriteHandle map,spsheet,*explode;
 
 int level=0;  // Tipo de enemigos por nivel
