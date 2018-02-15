@@ -309,7 +309,11 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 			Player -> x -= Player -> vx;
 			Player -> colbox.x1 -= Player -> vx;
 			Player -> colbox.x2 -= Player -> vx;
-			if (Player -> x <= -56 ) {Player -> x = 1000;}
+			if (Player -> x <= -56 ) {
+				Player -> x = 1000;
+				Player -> colbox.x1 = Player -> x;
+				Player -> colbox.x2 = Player -> x + 53;
+			}
 			if (!Player -> gravity) ++Player -> animation %= 4;
 		}
 		
@@ -323,7 +327,11 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 			Player -> x += Player -> vx;
 			Player -> colbox.x1 += Player -> vx;
 			Player -> colbox.x2 += Player -> vx;
-			if (Player -> x >=1000) {Player -> x = -10;}
+			if (Player -> x >=1000){
+				Player -> x = -10;
+				Player -> colbox.x1 = -10;
+				Player -> colbox.x2 = Player -> x + 53;
+			}
 			if ((Player -> animation < 3 || Player -> animation >= 7) && !Player -> gravity) {
 				Player -> animation = 3; 
 			}
@@ -375,7 +383,7 @@ void ItemSpawn(){
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
-	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
+	//esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
 	for(int i=0;i<6;++i){
 		if(objects[i].active==1){
