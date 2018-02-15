@@ -383,7 +383,7 @@ void ItemSpawn(){
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
-	//esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
+	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
 	for(int i=0;i<6;++i){
 		if(objects[i].active==1){
