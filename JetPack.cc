@@ -8,6 +8,7 @@
 #include <time.h>
 
 esat::SpriteHandle map,spsheet,*explode;
+esat::SpriteHandle *playerwalk, *playerfly;
 
 int level=0;  // Tipo de enemigos por nivel
 int time_=0;
@@ -26,10 +27,10 @@ struct spaceman{
   float x,y,vx,vy;
   cuadrado colbox;
   int lives=3,points=0;
-  bool gravity=true;
+  bool gravity=false;
   esat::SpriteHandle *sprite;
   char direction=0;
-  char animation;
+  char animation=0;
 };
 struct spaceman *player = NULL;
 
@@ -87,28 +88,30 @@ void CutInitialSprites(){
 	spsheet=esat::SpriteFromFile("./Recursos/Sprites/SpriteGeneral.png");
   
   // MAIN CHARACTER SPRITES
+	playerwalk = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
+	playerfly = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
   player=(struct spaceman*)malloc(1*sizeof(struct spaceman));
-  player->sprite=(esat::SpriteHandle*)malloc(16*sizeof(esat::SpriteHandle));
+  player->sprite=(esat::SpriteHandle*)malloc(4*sizeof(esat::SpriteHandle));
   //Walk animation
  
-  *(player->sprite)=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
-  *(player->sprite+1)=esat::SubSprite(spsheet,132,96,52,76);
-  *(player->sprite+2)=esat::SubSprite(spsheet,204,96,52,76);
-  *(player->sprite+3)=esat::SubSprite(spsheet,272,96,52,76);
-  *(player->sprite+4)=esat::SubSprite(spsheet,68,188,52,76); //DERECHA
-  *(player->sprite+5)=esat::SubSprite(spsheet,136,188,52,76);
-  *(player->sprite+6)=esat::SubSprite(spsheet,208,188,52,76);
-  *(player->sprite+7)=esat::SubSprite(spsheet,276,188,52,76);
+  *playerwalk=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
+  *(playerwalk+1)=esat::SubSprite(spsheet,132,96,52,76);
+  *(playerwalk+2)=esat::SubSprite(spsheet,204,96,52,76);
+  *(playerwalk+3)=esat::SubSprite(spsheet,272,96,52,76);
+  *(playerwalk+4)=esat::SubSprite(spsheet,68,188,52,76); //DERECHA
+  *(playerwalk+5)=esat::SubSprite(spsheet,136,188,52,76);
+  *(playerwalk+6)=esat::SubSprite(spsheet,208,188,52,76);
+  *(playerwalk+7)=esat::SubSprite(spsheet,276,188,52,76);
 
   //JetPac animation
-  player->sprite[8]=esat::SubSprite(spsheet,577,102,53,74); //IZQUIERDA
-  player->sprite[9]=esat::SubSprite(spsheet,649,102,53,74);
-  player->sprite[10]=esat::SubSprite(spsheet,724,99,53,74);
-  player->sprite[11]=esat::SubSprite(spsheet,796,99,53,74);
-  player->sprite[12]=esat::SubSprite(spsheet,569,185,53,74); //DERECHA
-  player->sprite[13]=esat::SubSprite(spsheet,644,188,53,74);
-  player->sprite[14]=esat::SubSprite(spsheet,719,185,53,74);
-  player->sprite[15]=esat::SubSprite(spsheet,791,185,53,74);
+  *playerfly=esat::SubSprite(spsheet,577,102,53,74); //IZQUIERDA
+  *(playerfly+1)=esat::SubSprite(spsheet,649,102,53,74);
+  *(playerfly+2)=esat::SubSprite(spsheet,724,99,53,74);
+  *(playerfly+3)=esat::SubSprite(spsheet,796,99,53,74);
+  *(playerfly+4)=esat::SubSprite(spsheet,569,185,53,74); //DERECHA
+  *(playerfly+5)=esat::SubSprite(spsheet,644,188,53,74);
+  *(playerfly+6)=esat::SubSprite(spsheet,719,185,53,74);
+  *(playerfly+7)=esat::SubSprite(spsheet,791,185,53,74);
   
   // EXPLOSION SPRITES
   explode=(esat::SpriteHandle*)malloc(3*sizeof(esat::SpriteHandle));
@@ -134,6 +137,7 @@ void Initiate(){
   player -> x = 500;
   player -> y = 642;
   player -> direction = 0;
+	player -> gravity = false;
   player -> vx = 6;
   player -> vy = 4;
   player -> colbox = {500,553,642,715};
@@ -237,28 +241,9 @@ void DrawShoots (){
 
 void Fly (spaceman *Player, esat::SpecialKey key){
 	
-	if (esat::IsSpecialKeyPressed(key) && 
-	!Player -> gravity && Player -> direction == 0) {
-		Player -> animation = 8;
-		Player -> gravity = true;
-		
-	} else if (esat::IsSpecialKeyPressed(key) && 
-	!Player -> gravity && Player -> direction == 1) {
-		Player -> animation = 12;
-		Player -> gravity = true;
-	}
 	
-	if (Player -> gravity && Player -> animation >= 11 && 
-	Player -> direction == 0) {
-		Player -> animation = 8;
-		
-	}else if (Player -> gravity && Player -> animation >= 15 && 
-	Player -> direction == 1) {
-		Player -> animation = 12;
-	}
-	
-	if (esat::IsSpecialKeyPressed(key) && 
-	Player -> gravity) {
+	if (esat::IsSpecialKeyPressed(key)) {
+		Player -> gravity = true;
 		cuadrado auxcolbox = Player -> colbox;
 		auxcolbox.y1 -= Player -> vy;
 		auxcolbox.y2 -= Player -> vy;
@@ -267,36 +252,75 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 			Player -> y -= Player -> vy;
 			Player -> colbox.y1 -= Player -> vy;
 			Player -> colbox.y2 -= Player -> vy;
-			++Player -> animation;
+			++Player -> animation %= 4;
 			
 		}
-		
 		
 	} else if (Player -> gravity){
 		cuadrado auxcolbox = Player -> colbox;
 		auxcolbox.y1 += Player -> vy + 2;
 		auxcolbox.y2 += Player -> vy + 2;
 		if(!ColPlatforms(auxcolbox)){
-			
 			Player -> y += Player -> vy + 2;
 			Player -> colbox.y1 += Player -> vy + 2;
 			Player -> colbox.y2 += Player -> vy + 2;
-			++Player -> animation;	
+			++Player -> animation %= 4;	
 			
-		}else Player -> gravity = false;
+		} else Player -> gravity = false;
 		
 	}
 	
 	if (Player -> y >= 646 && Player -> gravity) {
 	  Player -> gravity = false;
-		if (Player -> direction == 0) {
-			Player -> animation = 0;
-		} else if (Player -> direction = 1) Player -> animation = 4;
+		
 	}
 
 }
 
+void PlayerSprites(spaceman *Player){
+	
+	if (!Player -> gravity){
+		switch (Player -> direction){
+			
+			case 0:{
+				Player -> sprite[0] = playerwalk[0];
+				Player -> sprite[1] = playerwalk[1];
+				Player -> sprite[2] = playerwalk[2];
+				Player -> sprite[3] = playerwalk[3];
+				break;
+			}
+			
+			case 1:{
+				Player -> sprite[0] = playerwalk[4];
+				Player -> sprite[1] = playerwalk[5];
+				Player -> sprite[2] = playerwalk[6];
+				Player -> sprite[3] = playerwalk[7];
+				break;
+			}
+		}
 
+	} else {
+		switch (Player -> direction){
+			
+			case 0:{
+				Player -> sprite[0] = playerfly[0];
+				Player -> sprite[1] = playerfly[1];
+				Player -> sprite[2] = playerfly[2];
+				Player -> sprite[3] = playerfly[3];
+				break;
+			}
+			
+			case 1:{
+				Player -> sprite[0] = playerfly[4];
+				Player -> sprite[1] = playerfly[5];
+				Player -> sprite[2] = playerfly[6];
+				Player -> sprite[3] = playerfly[7];
+				break;
+			}
+		}
+			
+	}
+}
 
 void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey dir1){
 	
@@ -332,10 +356,7 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 				Player -> colbox.x1 = -10;
 				Player -> colbox.x2 = Player -> x + 53;
 			}
-			if ((Player -> animation < 3 || Player -> animation >= 7) && !Player -> gravity) {
-				Player -> animation = 3; 
-			}
-			if (!Player -> gravity) ++Player -> animation;
+			if (!Player -> gravity) ++Player -> animation %= 4;
 		}
 			
 	}
@@ -426,6 +447,8 @@ void UpdateFrame(){
 
 
 void FreeSprites(){
+	free(playerwalk);
+	free(playerfly);
 	free(player);
 	free(objects);
 	free(explode);
@@ -503,6 +526,7 @@ int esat::main(int argc, char **argv) {
     esat::DrawClear(0,0,0);
     
 	if(game_start){
+		PlayerSprites(player);
 		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
 		Fly(player,esat::kSpecialKey_Up);
     	Shot(esat::kSpecialKey_Space);
