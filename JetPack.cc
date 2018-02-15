@@ -31,7 +31,7 @@ struct spaceman{
   char direction=0;
   char animation;
 };
-struct spaceman *player;
+struct spaceman *player = NULL;
 
 
 struct disparos{
@@ -90,6 +90,7 @@ void CutInitialSprites(){
   player=(struct spaceman*)malloc(1*sizeof(struct spaceman));
   player->sprite=(esat::SpriteHandle*)malloc(16*sizeof(esat::SpriteHandle));
   //Walk animation
+ 
   *(player->sprite)=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
   *(player->sprite+1)=esat::SubSprite(spsheet,132,96,52,76);
   *(player->sprite+2)=esat::SubSprite(spsheet,204,96,52,76);
@@ -98,6 +99,7 @@ void CutInitialSprites(){
   *(player->sprite+5)=esat::SubSprite(spsheet,136,188,52,76);
   *(player->sprite+6)=esat::SubSprite(spsheet,208,188,52,76);
   *(player->sprite+7)=esat::SubSprite(spsheet,276,188,52,76);
+
   //JetPac animation
   player->sprite[8]=esat::SubSprite(spsheet,572,100,53,74); //IZQUIERDA
   player->sprite[9]=esat::SubSprite(spsheet,646,100,53,74);
@@ -136,7 +138,7 @@ void Initiate(){
   player -> vy = 4;
   player -> colbox = {500,553,646,719};
   //PLATAFORMAS
-  platforms=(struct terreno*)malloc(3*sizeof(struct terreno));
+  platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
   platforms[0].colbox={125,311,281,311};
   platforms[1].colbox={469,593,375,405};
   platforms[2].colbox={750,936,187,218};
@@ -174,12 +176,16 @@ bool Col (cuadrado colbox1, cuadrado colbox2){
 
 bool ColPlatforms(cuadrado colbox){
 	terreno *auxplats = platforms;
-	bool iscolliding;
-	while(auxplats != NULL){
-		iscolliding = Col(colbox,(*auxplats).colbox);
-		auxplats++;
+	
+	for(int i=0;i<4;i++){
+
+		if(Col(colbox,platforms[i].colbox))
+			return true;
+			
+		
 	}
-	return iscolliding;
+	
+	return false;
 }
 
 void Shot (esat::SpecialKey key){
@@ -291,14 +297,24 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey dir1){
 	
 	if (esat::IsSpecialKeyPressed(dir0)) {
-		Player -> direction = 0;
-		Player -> x -= Player -> vx;
-		Player -> colbox.x1 -= Player -> vx;
-		Player -> colbox.x2 -= Player -> vx;
-		if (Player -> x <= -56 ) {Player -> x = 1000;}
-		if (!Player -> gravity) ++Player -> animation %= 4;
+		cuadrado auxcolbox = Player -> colbox;
+		auxcolbox.x1 -= Player -> vx;
+		auxcolbox.x2 -= Player -> vx;
+		if(!ColPlatforms(auxcolbox)){
+			Player -> direction = 0;
+			Player -> x -= Player -> vx;
+			Player -> colbox.x1 -= Player -> vx;
+			Player -> colbox.x2 -= Player -> vx;
+			if (Player -> x <= -56 ) {Player -> x = 1000;}
+			if (!Player -> gravity) ++Player -> animation %= 4;
+		}
+		
 		
 	} else if (esat::IsSpecialKeyPressed(dir1)) {
+		cuadrado auxcolbox = Player -> colbox;
+		auxcolbox.x1 += Player -> vx;
+		auxcolbox.x2 += Player -> vx;
+		if(!ColPlatforms(auxcolbox)){
 			Player -> direction = 1;
 			Player -> x += Player -> vx;
 			Player -> colbox.x1 += Player -> vx;
@@ -308,6 +324,8 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 				Player -> animation = 3; 
 			}
 			if (!Player -> gravity) ++Player -> animation;
+		}
+			
 	}
 	
 }
@@ -353,7 +371,7 @@ void ItemSpawn(){
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
-	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
+	//esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
 	for(int i=0;i<6;++i){
 		if(objects[i].active==1){
