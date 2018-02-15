@@ -138,6 +138,7 @@ void Initiate(){
   player -> y = 642;
   player -> direction = 0;
 	player -> gravity = false;
+  player -> animation = 0;
   player -> vx = 6;
   player -> vy = 4;
   player -> colbox = {500,553,642,715};
@@ -177,6 +178,7 @@ bool Col (cuadrado colbox1, cuadrado colbox2){
 		return true;
 	}
 }
+
 
 bool ColPlatforms(cuadrado colbox){
 	terreno *auxplats = platforms;
@@ -266,6 +268,7 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 			++Player -> animation %= 4;
 
 		} else Player -> gravity = false;
+
 
 	}else if (!Player -> gravity){
     cuadrado auxcolbox = Player -> colbox;
