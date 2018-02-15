@@ -11,7 +11,7 @@ esat::SpriteHandle map,spsheet,*explode;
 
 int level=0;  // Tipo de enemigos por nivel
 int time_=0;
-int op=1;
+int op=1,enemyamount;
 int current_shots=0;
 bool multiplayer=false, game_start=false;
 
