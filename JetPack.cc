@@ -99,10 +99,10 @@ void CutInitialSprites(){
   *(player->sprite+6)=esat::SubSprite(spsheet,208,188,52,76);
   *(player->sprite+7)=esat::SubSprite(spsheet,276,188,52,76);
   //JetPac animation
-  player->sprite[8]=esat::SubSprite(spsheet,572,100,53,74); //IZQUIERDA
-  player->sprite[9]=esat::SubSprite(spsheet,646,100,53,74);
-  player->sprite[10]=esat::SubSprite(spsheet,720,96,53,74);
-  player->sprite[11]=esat::SubSprite(spsheet,792,96,53,74);
+  player->sprite[8]=esat::SubSprite(spsheet,577,102,53,74); //IZQUIERDA
+  player->sprite[9]=esat::SubSprite(spsheet,649,102,53,74);
+  player->sprite[10]=esat::SubSprite(spsheet,724,99,53,74);
+  player->sprite[11]=esat::SubSprite(spsheet,796,99,53,74);
   player->sprite[12]=esat::SubSprite(spsheet,569,185,53,74); //DERECHA
   player->sprite[13]=esat::SubSprite(spsheet,644,188,53,74);
   player->sprite[14]=esat::SubSprite(spsheet,719,185,53,74);
