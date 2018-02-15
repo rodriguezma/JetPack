@@ -128,15 +128,8 @@ void CutInitialSprites(){
   objects[5].sprite=esat::SubSprite(spsheet,60,632,52,40); //RADIACTIVO
 }
 
-
-
 void Initiate(){
-  player -> x = 500;
-  player -> y = 642;
-  player -> direction = 0;
-  player -> vx = 6;
-  player -> vy = 4;
-  player -> colbox = {500,553,642,715};
+  
   //PLATAFORMAS
   platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
   platforms[0].colbox={125,311,281,311};
@@ -151,6 +144,45 @@ void Initiate(){
   objects[3].points=250;
   objects[4].points=250;
   objects[5].points=250;
+}
+
+
+
+void InitiateSpaceman(){
+	player -> x = 500;
+	player -> y = 646;
+	player -> direction = 0;
+	player -> vx = 6;
+	player -> vy = 4;
+  player -> colbox = {500,553,646,719};
+}
+
+void InitiateLevel(char l){
+  switch(l){
+    case 0: enemyamount=6;
+      enemys=(struct enemigos*)malloc(enemyamount*sizeof(struct enemigos));
+      enemys->sprite=(esat::SpriteHandle*)malloc(2*sizeof(esat::SpriteHandle));
+      enemys->sprite[0]=esat::SubSprite(spsheet,740,324,56,40);
+      enemys->sprite[1]=esat::SubSprite(spsheet,812,324,56,40);
+      
+      rocket=(struct nave*)malloc(3*sizeof(struct nave));
+      rocket[0].sprite=esat::SubSprite(spsheet,236,420,56,52); //TOP
+      rocket[1].sprite=esat::SubSprite(spsheet,236,488,56,52); //BODY
+      rocket[2].sprite=esat::SubSprite(spsheet,236,556,56,40); //BOTTOM
+      rocket[0].x=125+93.5f-esat::SpriteWidth(rocket[0].sprite)/2.f;
+      rocket[0].y=281-esat::SpriteHeight(rocket[0].sprite);
+      rocket[1].x=469+62.5f-esat::SpriteWidth(rocket[1].sprite)/2.f;
+      rocket[1].y=375-esat::SpriteHeight(rocket[1].sprite);
+      rocket[2].x=700;
+      rocket[2].y=719-esat::SpriteHeight(rocket[2].sprite);
+      break;
+  }
+}
+
+void DrawRockets(){
+  esat::DrawSprite(rocket[0].sprite,rocket[0].x,rocket[0].y);
+  esat::DrawSprite(rocket[1].sprite,rocket[1].x,rocket[1].y);
+  esat::DrawSprite(rocket[2].sprite,rocket[2].x,rocket[2].y);
 }
 
 void DrawCol(cuadrado colbox){
@@ -231,7 +263,6 @@ void DrawShoots (){
 		auxshot++;
 	}
 }
-
 
 
 
@@ -388,8 +419,9 @@ void ItemSpawn(){
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
-	//esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
-	
+	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
+  DrawRockets(); 
+  
 	for(int i=0;i<6;++i){
 		if(objects[i].active==1){
 			
@@ -494,6 +526,8 @@ int esat::main(int argc, char **argv) {
   
 	CutInitialSprites();
 	Initiate();
+  InitiateSpaceman();
+  InitiateLevel(level);
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
