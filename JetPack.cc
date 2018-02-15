@@ -132,11 +132,11 @@ void CutInitialSprites(){
 
 void Initiate(){
   player -> x = 500;
-  player -> y = 646;
+  player -> y = 642;
   player -> direction = 0;
   player -> vx = 6;
   player -> vy = 4;
-  player -> colbox = {500,553,646,719};
+  player -> colbox = {500,553,642,715};
   //PLATAFORMAS
   platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
   platforms[0].colbox={125,311,281,311};
@@ -258,28 +258,32 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 	}
 	
 	if (esat::IsSpecialKeyPressed(key) && 
-	Player -> gravity && Player -> y >= 60) {
+	Player -> gravity) {
 		cuadrado auxcolbox = Player -> colbox;
 		auxcolbox.y1 -= Player -> vy;
 		auxcolbox.y2 -= Player -> vy;
-		//if (!ColPlatforms(auxcolbox)){
+		if (!ColPlatforms(auxcolbox)){
+			
 			Player -> y -= Player -> vy;
 			Player -> colbox.y1 -= Player -> vy;
 			Player -> colbox.y2 -= Player -> vy;
 			++Player -> animation;
-		//}
+			
+		}else Player -> gravity = false;
 		
 		
 	} else if (Player -> gravity){
 		cuadrado auxcolbox = Player -> colbox;
 		auxcolbox.y1 += Player -> vy + 2;
 		auxcolbox.y2 += Player -> vy + 2;
-		//if(!ColPlatforms(auxcolbox)){
+		if(!ColPlatforms(auxcolbox)){
+			
 			Player -> y += Player -> vy + 2;
 			Player -> colbox.y1 += Player -> vy + 2;
 			Player -> colbox.y2 += Player -> vy + 2;
 			++Player -> animation;	
-		//}
+			
+		}else Player -> gravity = false;
 		
 	}
 	
@@ -371,7 +375,7 @@ void ItemSpawn(){
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
-	//esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
+	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 	
 	for(int i=0;i<6;++i){
 		if(objects[i].active==1){
