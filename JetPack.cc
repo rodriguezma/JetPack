@@ -322,12 +322,13 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 		cuadrado auxcolbox = Player -> colbox;
 		auxcolbox.y1 -= Player -> vy;
 		auxcolbox.y2 -= Player -> vy;
+		++Player -> animation %= 4;
 		if (!ColPlatforms(auxcolbox)){
 
 			Player -> y -= Player -> vy;
 			Player -> colbox.y1 -= Player -> vy;
 			Player -> colbox.y2 -= Player -> vy;
-			++Player -> animation %= 4;
+			
 
 		}
 
