@@ -153,11 +153,12 @@ void Initiate(){
   player -> vy = 4;
   player -> colbox = {500,545,642,715};
   //PLATAFORMAS
-  platforms=(struct terreno*)malloc(4*sizeof(struct terreno));
+  platforms=(struct terreno*)malloc(5*sizeof(struct terreno));
   platforms[0].colbox={125,311,281,311};
   platforms[1].colbox={469,593,375,405};
   platforms[2].colbox={750,936,187,218};
   platforms[3].colbox={0,999,719,749};
+  platforms[4].colbox={0,999,0,50};
 
   //OBJETOS
   objects[0].points=100;
@@ -194,7 +195,7 @@ bool Col (cuadrado colbox1, cuadrado colbox2){
 bool ColPlatforms(cuadrado colbox){
 	terreno *auxplats = platforms;
 
-	for(int i=0;i<4;i++){
+	for(int i=0;i<5;i++){
 
 		if(Col(colbox,platforms[i].colbox))
 			return true;
@@ -751,6 +752,17 @@ void EnemiesMovement(){
 	}
 }
 
+void EnemiesLimits(){
+	for(int i=0;i<6;i++){
+		if(enemys[i].colbox.x1>1000){
+			enemys[i].colbox.x1 = -50;
+			enemys[i].colbox.x2 = 0;
+		}else if(enemys[i].colbox.x1<-50){
+			enemys[i].colbox.x1 = 1000;
+			enemys[i].colbox.x2 = 1050;
+		}
+	}
+}
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
@@ -884,6 +896,7 @@ int esat::main(int argc, char **argv) {
     	ShotsMovement();
     	EnemiesSpawn();
     	EnemiesMovement();
+    	EnemiesLimits();
 
 		if(time_%250==0){
 			ItemSpawn();
