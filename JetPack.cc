@@ -50,13 +50,13 @@ struct enemigos{
   float x,y,vx,vy;
   cuadrado colbox;
   int points;
-  bool alive=false;
+  bool alive;
   char color;
   esat::SpriteHandle *sprite;
   char direction=0;
   char animation;
 };
-struct enemigos *enemys;
+struct enemigos *enemys = NULL;
 
 
 struct nave{
@@ -317,8 +317,9 @@ void Initiate(){
   SelectEnemiesLevel();
   for (int i = 0; i < 6; ++i){
     enemys[i].color = rand()%4;
-    enemys[i].direction = rand()%2;
+    //enemys[i].direction = rand()%2;
     enemys[i]. animation = 0;
+    enemys[i].alive = false;
   }
 }
 
@@ -923,6 +924,7 @@ int esat::main(int argc, char **argv) {
 	Initiate();
   SpriteEnemyReserve();
 
+
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
 
@@ -934,12 +936,13 @@ int esat::main(int argc, char **argv) {
     esat::DrawClear(0,0,0);
 
 	if(game_start){
+		EnemiesSpawn();
 		PlayerSprites(player);
 		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
 		Fly(player,esat::kSpecialKey_Up);
     	Shot(esat::kSpecialKey_Space);
     	ShotsMovement();
-    	EnemiesSpawn();
+    	
     	EnemiesMovement();
     	EnemiesLimits();
 
