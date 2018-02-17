@@ -14,6 +14,7 @@ int level=1;  // Tipo de enemigos por nivel
 int time_=0;
 int op=1,enemyamount;
 int current_shots=0;
+int current_enemies=0;
 bool multiplayer=false, game_start=false;
 
 const int windowx=1000,windowy=750,gravity=2;
@@ -48,7 +49,7 @@ struct enemigos{
   float x,y,vx,vy;
   cuadrado colbox;
   int points;
-  bool alive=true;
+  bool alive=false;
   esat::SpriteHandle *sprite;
   char direction=0;
   char animation;
@@ -482,6 +483,34 @@ void ItemSpawn(){
 			objects[5].active=1;
 			objects[5].colbox={objects[5].x,objects[5].x+52,objects[5].y,objects[5].y+40};
 			break;//radioactive
+	}
+}
+
+void EnemiesSpawn(){
+	float time = esat::Time();
+	srand(time);
+	for(int i =0;i<6;i++){
+		if(!enemys[i].alive){
+			enemys[i].alive = true;
+			if(rand()%2==0){
+				enemys[i].colbox = {0,50,70 + rand()%650, enemys[i].colbox.y1 + 50};
+				enemys[i].vx = rand()%3 + 1;
+				enemys[i].vy = rand()%5 - 2;
+			}else{
+				enemys[i].colbox = {949,999,70 + rand()%650, enemys[i].colbox.y1 + 50};
+				enemys[i].vx = - (rand()%3 + 1);
+				enemys[i].vy = rand()%5 - 2;
+			}
+		}
+	}
+}
+
+void EnemiesMovement(){
+	for(int i=0;i<6;i++){
+		enemys[i].colbox.x1 += enemys[i].vx;
+		enemys[i].colbox.x2 += enemys[i].vx;
+		enemys[i].colbox.y1 += enemys[i].vy;
+		enemys[i].colbox.y2 += enemys[i].vy;
 	}
 }
 
