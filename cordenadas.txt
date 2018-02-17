@@ -130,76 +130,399 @@
 
 ////////////ENEMIGOS///////////////
 
-.enemy1.1 {
-  background-position: -740px -324px;
-  height: 40px;
-  width: 56px
+.enemy1.1G {
+  background-position: -743px -327px;
+  height: 32px;
+  width: 49px
 }
 
-.enemy1.2 {
-  background-position: -812px -324px;
-  height: 40px;
-  width: 56px
-}
-
-
-.enemy2.1 {
-  background-position: -744px -376px;
-  height: 48px;
-  width: 56px
-}
-
-.enemy2.2 {
-  background-position: -816px -376px;
-  height: 48px;
-  width: 56px
+.enemy1.2G {
+  background-position: -816px -327px;
+  height: 32px;
+  width: 49px
 }
 
 
-.enemy3.1 {
+.enemy1.3G {
+  background-position: -682px -327px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.4G {
+  background-position: -618px -327px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.1P {
+  background-position: -1005px -0px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.2P {
+  background-position: -1005px -33px;
+  height: 32px;
+  width: 49px
+}
+
+
+.enemy1.3P {
+  background-position: -1005px -67px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.4P {
+  background-position: -1005px -100px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.1R {
+  background-position: -1005px -134px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.2R {
+  background-position: -1005px -170px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.3R {
+  background-position: -1005px -206px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.4R {
+  background-position: -1005px -243px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.1B {
+  background-position: -1005px -275px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.2B {
+  background-position: -1005px -311px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.3B {
+  background-position: -1005px -344px;
+  height: 32px;
+  width: 49px
+}
+
+.enemy1.4B {
+  background-position: -1005px -378px;
+  height: 32px;
+  width: 49px
+}
+
+
+
+
+
+
+.enemy2.1G {
+  background-position: -747px -376px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.2G {
+  background-position: -817px -376px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.1P {
+  background-position: -953px -0px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.2P {
+  background-position: -953px -43px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.1R {
+  background-position: 955px -87px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.2R {
+  background-position: 955px -131px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.1B {
+  background-position: 955px -176px;
+  height: 42px;
+  width: 49px
+}
+
+.enemy2.2B {
+  background-position: 955px -217px;
+  height: 42px;
+  width: 49px
+}
+
+
+
+
+
+.enemy3.1G {
   background-position: -744px -436px;
   height: 52px;
   width: 52px
 }
 
-.enemy3.2 {
+.enemy3.2G {
   background-position: -816px -432px;
   height: 52px;
   width: 52px
 }
 
+.enemy3.1P {
+  background-position: -900px -4px;
+  height: 52px;
+  width: 52px
+}
 
-.enemy4 {
+.enemy3.2P {
+  background-position: -900px -56px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy3.1R {
+  background-position: -900px -125px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy3.2R {
+  background-position: -900px -184px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy3.1B {
+  background-position: -905px -253px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy3.2B {
+  background-position: -905px -305px;
+  height: 52px;
+  width: 52px
+}
+
+
+
+
+
+
+.enemy4.1G {
   background-position: -744px -512px;
   height: 28px;
   width: 52px
 }
 
-.enemy5 {
+.enemy4.2G {
+  background-position: -681px -515px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy4.1P {
+  background-position: -1037px -491px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy4.2P {
+  background-position: -1090px -491px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy4.1R {
+  background-position: -1039px -539px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy4.2R {
+  background-position: -1090px -539px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy4.1B {
+  background-position: -1038px -585px;
+  height: 28px;
+  width: 52px
+}
+
+.enemy4.2B {
+  background-position: -1095px -585px;
+  height: 28px;
+  width: 52px
+}
+
+
+
+
+
+
+.enemy5G {
   background-position: -744px -556px;
   height: 32px;
   width: 52px
 }
 
-.enemy6 {
+.enemy5P {
+  background-position: -685px -556px;
+  height: 32px;
+  width: 52px
+}
+
+.enemy5R {
+  background-position: -806px -556px;
+  height: 32px;
+  width: 52px
+}
+
+.enemy5B {
+  background-position: -807px -512px;
+  height: 32px;
+  width: 52px
+}
+
+
+
+
+
+.enemy6G {
   background-position: -744px -608px;
   height: 52px;
   width: 52px
 }
 
-.enemy7 {
-  background-position: -744px -668px;
+.enemy6P {
+  background-position: -681px -608px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy6R {
+  background-position: -864px -608px;
+  height: 52px;
+  width: 52px
+}
+
+.enemy6B {
+  background-position: -807px -608px;
+  height: 52px;
+  width: 52px
+}
+
+
+
+
+
+
+.enemy7.1G {
+  background-position: -745px -672px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.2G {
+  background-position: -679px -672px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.1P {
+  background-position: -1056px -0px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.2P {
+  background-position: -1056px -42px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.1R {
+  background-position: -1056px -85px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.2R {
+  background-position: -1056px -128px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.1B {
+  background-position: -1056px -171px;
+  height: 41px;
+  width: 51px
+}
+
+.enemy7.2B {
+  background-position: -1056px -212px;
+  height: 41px;
+  width: 51px
+}
+
+
+
+
+
+.enemy8G {
+  background-position: -744px -732px;
   height: 48px;
   width: 52px
 }
 
-.enemy8 {
-  background-position: -744px -736px;
+.enemy8P {
+  background-position: -686px -732px;
   height: 48px;
   width: 52px
 }
 
+.enemy8R {
+  background-position: -805px -732px;
+  height: 48px;
+  width: 52px
+}
 
+.enemy8B {
+  background-position: -861px -732px;
+  height: 48px;
+  width: 52px
+}
 
 
 ////////////////ITEMS/////////////////////
@@ -210,11 +533,31 @@
   width: 52px
 }
 
-.gema {
+
+.gemaB {
   background-position: -68px -380px;
   height: 44px;
   width: 44px
 }
+
+.gemaG {
+  background-position: -130px -380px;
+  height: 44px;
+  width: 44px
+}
+
+.gemaY {
+  background-position: -130px -312px;
+  height: 44px;
+  width: 44px
+}
+
+.gemaR {
+  background-position: -130px -440px;
+  height: 44px;
+  width: 44px
+}
+
 
 .bola {
   background-position: -60px -444px;
@@ -264,6 +607,49 @@
 }
 
 
+mitad_nave1 {
+  background-position: -230px -725px;
+  height: 98px;
+  width: 56px
+}
+
+.ico_nave1.1 {
+  background-position: -4px -854px;
+  height: 183px;
+  width: 49px
+}
+
+
+.ico_nave1.2 {
+  background-position: -52px -854px;
+  height: 183px;
+  width: 49px
+}
+
+.ico_nave1.3 {
+  background-position: -102px -854px;
+  height: 183px;
+  width: 49px
+}
+
+.ico_nave1.4 {
+  background-position: -153px -854px;
+  height: 183px;
+  width: 49px
+}
+
+.ico_nave1.5 {
+  background-position: -204px -854px;
+  height: 183px;
+  width: 49px
+}
+
+.ico_nave1.6 {
+  background-position: -255px -854px;
+  height: 183px;
+  width: 49px
+}
+
 .cabeza.nave2 {
   background-position: -332px -420px;
   height: 52px;
@@ -280,6 +666,48 @@
   background-position: -332px -556px;
   height: 52px;
   width: 56px
+}
+
+mitad_nave2{
+  background-position: -324px -726px;
+  height: 98px;
+  width: 56px
+}
+
+.ico_nave2.1 {
+  background-position: -308px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave2.2 {
+  background-position: -362px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave2.3 {
+  background-position: -414px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave2.4 {
+  background-position: -466px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave2.5 {
+  background-position: -518px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave2.6 {
+  background-position: -572px -853px;
+  height: 183px;
+  width: 50px
 }
 
 
@@ -301,6 +729,48 @@
   width: 56px
 }
 
+mitad_nave3 {
+  background-position: -450px -725px;
+  height: 98px;
+  width: 56px
+}
+
+.ico_nave3.1 {
+  background-position: -624px -851px;
+  height: 186px;
+  width: 50px
+}
+
+.ico_nave3.2 {
+  background-position: -676px -851px;
+  height: 186px;
+  width: 50px
+}
+
+.ico_nave3.3 {
+  background-position: -730px -851px;
+  height: 186px;
+  width: 50px
+}
+
+.ico_nave3.4 {
+  background-position: -782px -851px;
+  height: 186px;
+  width: 50px
+}
+
+.ico_nave3.5 {
+  background-position: -834px -851px;
+  height: 186px;
+  width: 50px
+}
+
+.ico_nave3.6 {
+  background-position: -888px -851px;
+  height: 186px;
+  width: 50px
+}
+
 
 .cabeza.nave4 {
   background-position: -584px -420px;
@@ -320,6 +790,54 @@
   width: 56px
 }
 
+.base.nave4 {
+  background-position: -584px -556px;
+  height: 52px;
+  width: 56px
+}
+
+.mitad.nave4 {
+  background-position: -580px -722px;
+  height: 98px;
+  width: 50px
+}
+
+.ico_nave4.1 {
+  background-position: -942px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave4.2 {
+  background-position: -996px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave4.3 {
+  background-position: -1050px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave4.4 {
+  background-position: -1104px -853px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave4.5 {
+  background-position: -1056px -660px;
+  height: 183px;
+  width: 50px
+}
+
+.ico_nave4.6 {
+  background-position: -1108px -660px;
+  height: 183px;
+  width: 50px
+}
+
 .turbo1 {
   background-position: -348px -636px;
   height: 52px;
@@ -331,3 +849,5 @@
   height: 52px;
   width: 56px
 }
+
+
