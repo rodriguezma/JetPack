@@ -302,8 +302,8 @@ void Initiate(){
   platforms[0].colbox={125,311,281,311};
   platforms[1].colbox={469,593,375,405};
   platforms[2].colbox={750,936,187,218};
-  platforms[3].colbox={0,999,719,749};
-  platforms[4].colbox={0,999,0,50};
+  platforms[3].colbox={-50,1050,719,749};
+  platforms[4].colbox={-50,1050,0,50};
 
   //OBJETOS
   objects[0].points=100;
@@ -760,16 +760,16 @@ void EnemiesSpawn(){
 			enemys[i].alive = true;
 			if(rand()%2==0){
 				enemys[i].colbox = {0,50,0,0};
-				enemys[i].colbox.y1 = (float)(70 + rand()%600);
+				enemys[i].colbox.y1 = (float)(100 + rand()%550);
 				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
-				enemys[i].vx = rand()%3 + 1;
+				enemys[i].vx = rand()%2 + 3;
 				enemys[i].vy = rand()%5 - 2;
 				enemys[i].direction = 1;
 			}else{
 				enemys[i].colbox = {949,999,0,0};
-				enemys[i].colbox.y1 = (float)(70 + rand()%600);
+				enemys[i].colbox.y1 = (float)(100 + rand()%550);
 				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
-				enemys[i].vx = - (rand()%3 + 1);
+				enemys[i].vx = - (rand()%2 + 3);
 				enemys[i].vy = rand()%5 - 2;
 				enemys[i].direction = 0;
 			}
