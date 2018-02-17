@@ -8,7 +8,8 @@
 #include <time.h>
 
 esat::SpriteHandle map,spsheet,*explode;
-esat::SpriteHandle *playerwalk, *playerfly, *martians;
+esat::SpriteHandle *playerwalk, *playerfly;
+esat::SpriteHandle *martians;
 
 int level=1;  // Tipo de enemigos por nivel
 int time_=0;
@@ -49,6 +50,7 @@ struct enemigos{
   cuadrado colbox;
   int points;
   bool alive=true;
+  char color;
   esat::SpriteHandle *sprite;
   char direction=0;
   char animation;
@@ -95,6 +97,9 @@ void CutInitialSprites(){
 
 
   enemys = (struct enemigos*) malloc (6*sizeof(struct enemigos));
+  for (int i=0; i<6; ++i){
+    (enemys+i) -> sprite = (esat::SpriteHandle*)calloc(2,sizeof(esat::SpriteHandle));
+  }
 
   //Walk animation
   *playerwalk=esat::SubSprite(spsheet,64,96,52,76); //IZQUIERDA
@@ -132,21 +137,6 @@ void CutInitialSprites(){
   objects[3].sprite=esat::SubSprite(spsheet,60,504,52,28); //LINGOTES
   objects[4].sprite=esat::SubSprite(spsheet,60,564,52,44); //TRIANGULO
   objects[5].sprite=esat::SubSprite(spsheet,60,632,52,40); //RADIACTIVO
-
-  // Enemies
-  martians = (esat::SpriteHandle*) calloc (11,sizeof(esat::SpriteHandle));
-  martians[0] = esat::SubSprite(spsheet,740,324,56,40);
-  martians[1] = esat::SubSprite(spsheet,812,324,56,40);
-  martians[2] = esat::SubSprite(spsheet,744,376,56,48),
-  martians[3] = esat::SubSprite(spsheet,816,376,56,48);
-  martians[4] = esat::SubSprite(spsheet,744,436,52,52);
-  martians[5] = esat::SubSprite(spsheet,816,432,52,52);
-  martians[6] = esat::SubSprite(spsheet,744,512,52,28);
-  martians[7] = esat::SubSprite(spsheet,744,556,52,32);
-  martians[8] = esat::SubSprite(spsheet,744,608,52,52);
-  martians[9] = esat::SubSprite(spsheet,744,668,52,48);
-  martians[10] = esat::SubSprite(spsheet,744,736,52,48);
-
 
 }
 
@@ -213,58 +203,291 @@ bool ColPlatforms(cuadrado colbox){
 }
 
 
-
-void SelectEnemies(enemigos *martian){
+// Utililzada al principio de cada nivel para cargar sprites enemigos
+void SelectEnemiesLevel(){
 
   switch (level){
 
     case 1:{
-      martian -> sprite = (esat::SpriteHandle*)calloc(2,sizeof(esat::SpriteHandle));
-      *(martian -> sprite) = martians[0];
-      *(martian -> sprite+1) = martians[1];
+      martians = (esat::SpriteHandle*) calloc (16,sizeof(esat::SpriteHandle));
+      // TIPO 1
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,682,327,49,32); // izq
+      martians[1] = esat::SubSprite(spsheet,618,327,49,32);
+      martians[2] = esat::SubSprite(spsheet,743,327,49,32), // der
+      martians[3] = esat::SubSprite(spsheet,816,327,49,32);
+      //Morado
+      martians[4] = esat::SubSprite(spsheet,1005,0,49,32); // izq
+      martians[5] = esat::SubSprite(spsheet,1005,33,49,32);
+      martians[6] = esat::SubSprite(spsheet,1005,67,49,32); // der
+      martians[7] = esat::SubSprite(spsheet,1005,100,49,32);
+      //Rojo
+      martians[8] = esat::SubSprite(spsheet,1005,134,49,32); // izq
+      martians[9] = esat::SubSprite(spsheet,1005,170,49,32);
+      martians[10] = esat::SubSprite(spsheet,1005,206,49,32); // der
+      martians[11] = esat::SubSprite(spsheet,1005,243,49,32);
+      //Azul
+      martians[12] = esat::SubSprite(spsheet,1005,275,49,32); // izq
+      martians[13] = esat::SubSprite(spsheet,1005,311,49,32);
+      martians[14] = esat::SubSprite(spsheet,1005,344,49,32); // der
+      martians[15] = esat::SubSprite(spsheet,1005,378,49,32);
     break;
     }
 
     case 2:{
-      *(martian -> sprite) = martians[2];
-      *(martian -> sprite+1) = martians[3];
+      martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
+      //TIPO 2
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,747,376,49,42);
+      martians[1] = esat::SubSprite(spsheet,817,376,49,42);
+      //Morado
+      martians[2] = esat::SubSprite(spsheet,953,0,49,42),
+      martians[3] = esat::SubSprite(spsheet,953,43,49,42);
+      //Rojo
+      martians[4] = esat::SubSprite(spsheet,955,87,49,42);
+      martians[5] = esat::SubSprite(spsheet,955,131,49,42);
+      //Azul
+      martians[6] = esat::SubSprite(spsheet,955,176,49,42);
+      martians[7] = esat::SubSprite(spsheet,955,217,49,42);
     break;
     }
 
     case 3:{
-      *(martian -> sprite) = martians[4];
-      *(martian -> sprite+1) = martians[5];
+      //TIPO 3
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,744,436,52,52);
+      martians[1] = esat::SubSprite(spsheet,816,432,52,52);
+      //Morado
+      martians[2] = esat::SubSprite(spsheet,900,4,52,52),
+      martians[3] = esat::SubSprite(spsheet,900,56,52,52);
+      //Rojo
+      martians[4] = esat::SubSprite(spsheet,900,125,52,52);
+      martians[5] = esat::SubSprite(spsheet,900,184,52,52);
+      //Azul
+      martians[6] = esat::SubSprite(spsheet,905,253,52,52);
+      martians[7] = esat::SubSprite(spsheet,905,305,52,52);
     break;
     }
 
     case 4:{
-      martian -> sprite = (esat::SpriteHandle*) realloc (martian->sprite,sizeof(esat::SpriteHandle));
-      *(martian -> sprite) = martians[6];
+      //TIPO 4
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,681,515,52,28); // izq
+      martians[1] = esat::SubSprite(spsheet,744,512,52,28); // der
+      //Morado
+      martians[2] = esat::SubSprite(spsheet,1037,491,52,28),  // izq
+      martians[3] = esat::SubSprite(spsheet,1090,491,52,28); // der
+      //Rojo
+      martians[4] = esat::SubSprite(spsheet,1039,539,52,28);  // izq
+      martians[5] = esat::SubSprite(spsheet,1090,539,52,28); // der
+      //Azul
+      martians[6] = esat::SubSprite(spsheet,1038,585,52,28);  // izq
+      martians[7] = esat::SubSprite(spsheet,1095,585,52,28); // der
     break;
     }
 
     case 5:{
-      *(martian -> sprite) = martians[7];
+      martians = (esat::SpriteHandle*) realloc (martians,4*sizeof(esat::SpriteHandle));
+      //TIPO 5
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,744,556,52,32);
+      //Morado
+      martians[1] = esat::SubSprite(spsheet,685,556,52,32),
+      //Rojo
+      martians[2] = esat::SubSprite(spsheet,806,556,52,32);
+      //Azul
+      martians[3] = esat::SubSprite(spsheet,807,512,52,32);
     break;
     }
 
     case 6:{
-      *(martian -> sprite) = martians[8];
+      //TIPO 6
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,744,608,52,52);
+      //Morado
+      martians[1] = esat::SubSprite(spsheet,681,608,52,52),
+      //Rojo
+      martians[2] = esat::SubSprite(spsheet,864,608,52,52);
+      //Azul
+      martians[3] = esat::SubSprite(spsheet,807,608,52,52);
     break;
     }
 
     case 7:{
-      *(martian -> sprite) = martians[9];
+      martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
+      //TIPO 7
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,679,672,51,41); // izq
+      martians[1] = esat::SubSprite(spsheet,745,672,51,41); // der
+      //Morado
+      martians[2] = esat::SubSprite(spsheet,1056,0,51,41),  // izq
+      martians[3] = esat::SubSprite(spsheet,1056,42,51,41); // der
+      //Rojo
+      martians[4] = esat::SubSprite(spsheet,1056,85,51,41);  // izq
+      martians[5] = esat::SubSprite(spsheet,1056,128,51,41); // der
+      //Azul
+      martians[6] = esat::SubSprite(spsheet,1056,171,51,41);  // izq
+      martians[7] = esat::SubSprite(spsheet,1056,212,51,41); // der
     break;
     }
 
     case 8:{
-      *(martian -> sprite) = martians[10];
+      martians = (esat::SpriteHandle*) realloc (martians,4*sizeof(esat::SpriteHandle));
+      //TIPO 8
+      //Verde
+      martians[0] = esat::SubSprite(spsheet,744,732,52,48);
+      //Morado
+      martians[1] = esat::SubSprite(spsheet,686,732,52,48),
+      //Rojo
+      martians[2] = esat::SubSprite(spsheet,805,732,52,48);
+      //Azul
+      martians[3] = esat::SubSprite(spsheet,861,732,52,48);
     break;
     }
   }
 
+}
 
+// Utilizada al principio de cada nivel para reservar la memoria necesaria
+void SpriteEnemyReserve(){
+
+  if (level == 5 || level == 6 || level == 8){
+    for (int i = 0; i < 6; ++i){
+      ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),sizeof(esat::SpriteHandle));
+
+    }
+
+  } else {
+    for (int i = 0; i < 6; ++i){
+      ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),2*sizeof(esat::SpriteHandle));
+    }
+  }
+}
+
+
+//Función para imprimir sprites de nivel 1 (moco)
+//Se tiene en cuenta color,direccion y animación
+void Enemies1 (enemigos *marcianitos){
+
+      switch (marcianitos -> color){
+
+        case 0:{
+          if (marcianitos -> direction == 0){
+            marcianitos -> sprite[0] = martians[0];
+            marcianitos -> sprite[1] = martians[1];
+
+          }else if (marcianitos -> direction ==1){
+            marcianitos -> sprite[0] = martians[2];
+            marcianitos -> sprite[1] = martians[3];
+          }
+        break;
+        }
+
+        case 1:{
+          if (marcianitos -> direction == 0){
+            marcianitos -> sprite[0] = martians[4];
+            marcianitos -> sprite[1] = martians[5];
+
+          }else if (marcianitos -> direction ==1){
+            marcianitos -> sprite[0] = martians[6];
+            marcianitos -> sprite[1] = martians[7];
+          }
+        break;
+        }
+
+        case 2:{
+          if (marcianitos -> direction == 0){
+            marcianitos -> sprite[0] = martians[8];
+            marcianitos -> sprite[1] = martians[9];
+
+          }else if (marcianitos -> direction ==1){
+            marcianitos -> sprite[0] = martians[10];
+            marcianitos -> sprite[1] = martians[11];
+          }
+        break;
+        }
+
+        case 3:{
+          if (marcianitos -> direction == 0){
+            marcianitos -> sprite[0] = martians[12];
+            marcianitos -> sprite[1] = martians[13];
+
+          }else if (marcianitos -> direction ==1){
+            marcianitos -> sprite[0] = martians[14];
+            marcianitos -> sprite[1] = martians[15];
+          }
+        break;
+        }
+      }
+  }
+
+
+//Función para los sprites enemigos de nivel 5, 6 y 8
+//Solo se tiene en cuenta el color,
+// ya que ni cambian de animación ni de sprite con la direccion
+void Enemies_568 (enemigos *marcianitos){
+
+  switch (marcianitos -> color){
+
+    case 0:{
+      marcianitos -> sprite[0] = martians[0];
+    break;
+    }
+
+    case 1:{
+      marcianitos -> sprite[0] = martians[1];
+    break;
+    }
+
+    case 2:{
+      marcianitos -> sprite[0] = martians[2];
+    break;
+    }
+
+    case 3:{
+      marcianitos -> sprite[0] = martians[3];
+    break;
+    }
+
+  }
+}
+
+
+//Función para los sprites enemigos de nivel 2,3,4 y 7
+//Para los enemigos de nivel 2 y 3, no se tendra en cuenta la dirección, solo color y animación
+//Para los enemigos de nivel 4 y 7 (pajaros y naves), se debe tener en cuenta que,
+//al cambiar la animación cambiará la dirección del sprite
+//En estos niveles vendría bien igualar la animación a la dirección constantemente,
+//en lugar de incrementarla
+
+void Enemies23_47 (enemigos *marcianitos){
+
+  switch (marcianitos -> color){
+
+    case 0:{
+        marcianitos -> sprite[0] = martians[0];
+        marcianitos -> sprite[1] = martians[1];
+    break;
+    }
+
+    case 1:{
+        marcianitos -> sprite[0] = martians[2];
+        marcianitos -> sprite[1] = martians[3];
+    break;
+    }
+
+    case 2:{
+        marcianitos -> sprite[0] = martians[4];
+        marcianitos -> sprite[1] = martians[5];
+    break;
+    }
+
+    case 3:{
+        marcianitos -> sprite[0] = martians[6];
+        marcianitos -> sprite[1] = martians[7];
+    break;
+    }
+  }
 }
 
 
@@ -328,7 +551,7 @@ void Fly (spaceman *Player, esat::SpecialKey key){
 			Player -> y -= Player -> vy;
 			Player -> colbox.y1 -= Player -> vy;
 			Player -> colbox.y2 -= Player -> vy;
-			
+
 
 		}
 
