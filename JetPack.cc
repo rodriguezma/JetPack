@@ -142,69 +142,6 @@ void CutInitialSprites(){
 }
 
 
-
-void Initiate(){
-  player -> x = 500;
-  player -> y = 642;
-  player -> direction = 0;
-	player -> gravity = false;
-  player -> animation = 0;
-  player -> vx = 6;
-  player -> vy = 4;
-  player -> colbox = {500,545,642,715};
-  //PLATAFORMAS
-  platforms=(struct terreno*)malloc(5*sizeof(struct terreno));
-  platforms[0].colbox={125,311,281,311};
-  platforms[1].colbox={469,593,375,405};
-  platforms[2].colbox={750,936,187,218};
-  platforms[3].colbox={0,999,719,749};
-  platforms[4].colbox={0,999,0,50};
-
-  //OBJETOS
-  objects[0].points=100;
-  objects[1].points=250;
-  objects[2].points=250;
-  objects[3].points=250;
-  objects[4].points=250;
-  objects[5].points=250;
-}
-
-void DrawCol(cuadrado colbox){
-
-	esat::DrawSetStrokeColor(255,255,255);
-	esat::DrawSetFillColor(255,255,255);
-
-	esat::DrawLine(colbox.x1 , colbox.y1 , colbox.x2 , colbox.y1);
-	esat::DrawLine(colbox.x2 , colbox.y1 , colbox.x2 , colbox.y2);
-	esat::DrawLine(colbox.x2 , colbox.y2 , colbox.x1 , colbox.y2);
-	esat::DrawLine(colbox.x1 , colbox.y2 , colbox.x1 , colbox.y1);
-}
-
-
-bool Col (cuadrado colbox1, cuadrado colbox2){
-	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
-		return false;
-	else if(colbox1.y2 < colbox2.y1 || colbox1.y1 > colbox2.y2)
-		return false;
-	else{
-		return true;
-	}
-}
-
-
-bool ColPlatforms(cuadrado colbox){
-	terreno *auxplats = platforms;
-
-	for(int i=0;i<5;i++){
-
-		if(Col(colbox,platforms[i].colbox))
-			return true;
-	}
-
-	return false;
-}
-
-
 // Utililzada al principio de cada nivel para cargar sprites enemigos
 void SelectEnemiesLevel(){
 
@@ -349,6 +286,77 @@ void SelectEnemiesLevel(){
   }
 
 }
+
+
+void Initiate(){
+  player -> x = 500;
+  player -> y = 642;
+  player -> direction = 0;
+	player -> gravity = false;
+  player -> animation = 0;
+  player -> vx = 6;
+  player -> vy = 4;
+  player -> colbox = {500,545,642,715};
+  //PLATAFORMAS
+  platforms=(struct terreno*)malloc(5*sizeof(struct terreno));
+  platforms[0].colbox={125,311,281,311};
+  platforms[1].colbox={469,593,375,405};
+  platforms[2].colbox={750,936,187,218};
+  platforms[3].colbox={0,999,719,749};
+  platforms[4].colbox={0,999,0,50};
+
+  //OBJETOS
+  objects[0].points=100;
+  objects[1].points=250;
+  objects[2].points=250;
+  objects[3].points=250;
+  objects[4].points=250;
+  objects[5].points=250;
+
+  //enemigos
+  SelectEnemiesLevel();
+  for (int i = 0; i < 6; ++i){
+    enemys[i].color = rand()%4;
+    enemys[i].direction = rand()%2;
+    enemys[i]. animation = 0;
+  }
+}
+
+void DrawCol(cuadrado colbox){
+
+	esat::DrawSetStrokeColor(255,255,255);
+	esat::DrawSetFillColor(255,255,255);
+
+	esat::DrawLine(colbox.x1 , colbox.y1 , colbox.x2 , colbox.y1);
+	esat::DrawLine(colbox.x2 , colbox.y1 , colbox.x2 , colbox.y2);
+	esat::DrawLine(colbox.x2 , colbox.y2 , colbox.x1 , colbox.y2);
+	esat::DrawLine(colbox.x1 , colbox.y2 , colbox.x1 , colbox.y1);
+}
+
+
+bool Col (cuadrado colbox1, cuadrado colbox2){
+	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
+		return false;
+	else if(colbox1.y2 < colbox2.y1 || colbox1.y1 > colbox2.y2)
+		return false;
+	else{
+		return true;
+	}
+}
+
+
+bool ColPlatforms(cuadrado colbox){
+	terreno *auxplats = platforms;
+
+	for(int i=0;i<5;i++){
+
+		if(Col(colbox,platforms[i].colbox))
+			return true;
+	}
+
+	return false;
+}
+
 
 // Utilizada al principio de cada nivel para reservar la memoria necesaria
 void SpriteEnemyReserve(){
@@ -717,7 +725,7 @@ void ItemSpawn(){
 }
 
 void DrawItems(){
-	
+
 	for(int i = 0;i < 6;++i){
 		if(objects[i].active==1){//If active, draw object
 
@@ -741,7 +749,7 @@ void DrawItems(){
 			DrawCol(objects[i].colbox);
 		}
 	}
-	
+
 }
 
 void EnemiesSpawn(){
@@ -810,10 +818,23 @@ void EnemiesLimits(){
 	}
 }
 
+void DrawEnemies(){
+
+  for (int i = 0; i < 6; ++i){
+    Enemies1(enemys+i);
+    if (enemys[i].alive){
+      esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
+      if (time_ % 5 ==0)
+        ++enemys[i].animation %= 2;
+    }
+  }
+
+}
+
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
 	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
-
+  DrawEnemies();
 	DrawShoots();
 	DrawCol((*player).colbox);
 	DrawCol(platforms[0].colbox);
@@ -834,7 +855,10 @@ void FreeSprites(){
 	free(playerwalk);
 	free(playerfly);
   free(martians);
+  for (int i = 0; i < 6; ++i)
+  free(enemys[i].sprite);
   free(enemys);
+  free(player -> sprite);
 	free(player);
 	free(objects);
 	free(explode);
@@ -900,6 +924,7 @@ int esat::main(int argc, char **argv) {
 
 	CutInitialSprites();
 	Initiate();
+  SpriteEnemyReserve();
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
