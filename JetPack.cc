@@ -674,39 +674,73 @@ void ItemSpawn(){
 			objects[0].x = rand()%957;
 			objects[0].y = 0;
 			objects[0].active=1;
-			objects[0].colbox={objects[0].x,objects[0].x+52,objects[0].y,objects[0].y+36};
+			objects[0].pickup=0;
+			objects[0].colbox={objects[0].x, objects[0].x + 52, objects[0].y, objects[0].y + 36};
 			break;//fuel
 		case 6,7:
 			objects[1].x = rand()%957;
 			objects[1].y = 0;
 			objects[1].active=1;
-			objects[1].colbox={objects[1].x,objects[1].x+44,objects[1].y,objects[1].y+44};
+			objects[1].pickup=0;
+			objects[1].colbox={objects[1].x, objects[1].x + 44, objects[1].y, objects[1].y + 44};
 			break;//diamond
 		case 8,9:
 			objects[2].x = rand()%957;
 			objects[2].y = 0;
 			objects[2].active=1;
-			objects[2].colbox={objects[2].x,objects[2].x+52,objects[2].y,objects[2].y+32};
+			objects[2].pickup=0;
+			objects[2].colbox={objects[2].x, objects[2].x + 52, objects[2].y, objects[2].y + 32};
 			break;//emerald
 		case 10,11:
 			objects[3].x = rand()%957;
 			objects[3].y = 0;
 			objects[3].active=1;
-			objects[3].colbox={objects[3].x,objects[3].x+52,objects[3].y,objects[3].y+28};
+			objects[3].pickup=0;
+			objects[3].colbox={objects[3].x, objects[3].x + 52, objects[3].y, objects[3].y + 28};
 			break;//gold
 		case 12,13:
 			objects[4].x = rand()%957;
 			objects[4].y = 0;
 			objects[4].active=1;
-			objects[4].colbox={objects[4].x,objects[4].x+52,objects[4].y,objects[4].y+44};
+			objects[4].pickup=0;
+			objects[4].colbox={objects[4].x, objects[4].x + 52, objects[4].y, objects[4].y + 44};
 			break;//atomic
 		case 14,15:
 			objects[5].x = rand()%957;
 			objects[5].y = 0;
 			objects[5].active=1;
-			objects[5].colbox={objects[5].x,objects[5].x+52,objects[5].y,objects[5].y+40};
+			objects[5].pickup=0;
+			objects[5].colbox={objects[5].x, objects[5].x + 52, objects[5].y, objects[5].y + 40};
 			break;//radioactive
 	}
+}
+
+void DrawItems(){
+	
+	for(int i = 0;i < 6;++i){
+		if(objects[i].active==1){//If active, draw object
+
+			esat::DrawSprite(objects[i].sprite, objects[i].x, objects[i].y);
+			if(!ColPlatforms(objects[i].colbox)&&objects[i].pickup!=1){//No colision = go down
+			objects[i].y += 5;
+			objects[i].colbox.y1 += 5;
+			objects[i].colbox.y2 += 5;
+			}else if(objects[0].pickup == 1){//Pickup fuel
+			objects[0].x = player -> x;
+			objects[0].y = player -> y;
+			objects[0].colbox.x1 = player -> colbox.x1;
+			objects[0].colbox.x2 = player -> colbox.x2;
+			objects[0].colbox.y1 = player -> colbox.y1;
+			objects[0].colbox.y2 = player -> colbox.y2;
+			}
+			if(Col(objects[i].colbox, player -> colbox)){//Pickup other items
+				objects[i].pickup = 1;
+				if(i!=0){objects[i].active = 0;}
+			}
+			DrawCol(objects[i].colbox);
+		}
+	}
+	
 }
 
 void EnemiesSpawn(){
@@ -756,29 +790,6 @@ void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
 	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
 
-	for(int i=0;i<6;++i){
-		if(objects[i].active==1){
-
-			esat::DrawSprite(objects[i].sprite,objects[i].x,objects[i].y);
-			if(objects[i].y <= (715 - esat::SpriteHeight(objects[i].sprite))&&objects[i].pickup!=1){
-			objects[i].y += 5;
-			objects[i].colbox.y1+=5;
-			objects[i].colbox.y2+=5;
-			}else if(objects[0].pickup==1){
-			objects[0].x=player -> x;
-			objects[0].y=player -> y;
-			objects[0].colbox.x1 =player -> colbox.x1;
-			objects[0].colbox.x2 =player -> colbox.x2;
-			objects[0].colbox.y1 =player -> colbox.y1;
-			objects[0].colbox.y2 =player -> colbox.y2;
-			}
-			if(Col(objects[i].colbox,player -> colbox)){
-				objects[i].pickup=1;
-				if(i!=0){objects[i].active=0;}
-			}
-			DrawCol(objects[i].colbox);
-		}
-	}
 	DrawShoots();
 	DrawCol((*player).colbox);
 	DrawCol(platforms[0].colbox);
