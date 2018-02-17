@@ -756,12 +756,14 @@ void EnemiesSpawn(){
 				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
 				enemys[i].vx = rand()%3 + 1;
 				enemys[i].vy = rand()%5 - 2;
+				enemys[i].direction = 1;
 			}else{
 				enemys[i].colbox = {949,999,0,0};
 				enemys[i].colbox.y1 = (float)(70 + rand()%600);
 				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
 				enemys[i].vx = - (rand()%3 + 1);
 				enemys[i].vy = rand()%5 - 2;
+				enemys[i].direction = 0;
 			}
 		}
 	}
@@ -772,13 +774,23 @@ void EnemiesMovement(){
 		cuadrado auxcolbox = enemys[i].colbox;
 		auxcolbox.x1 += enemys[i].vx;
 		auxcolbox.x2 += enemys[i].vx;
-		if(ColPlatforms(auxcolbox))
+		if(ColPlatforms(auxcolbox)){
 			enemys[i].vx = - enemys[i].vx;
+			if(enemys[i].direction == 0)
+				enemys[i].direction = 1;
+			else
+				enemys[i].direction = 0;
+		}
 		auxcolbox = enemys[i].colbox;
 		auxcolbox.y1 += enemys[i].vy;
 		auxcolbox.y2 += enemys[i].vy;
-		if(ColPlatforms(auxcolbox))
+		if(ColPlatforms(auxcolbox)){
 			enemys[i].vy = - enemys[i].vy;
+			if(enemys[i].direction == 0)
+				enemys[i].direction = 1;
+			else
+				enemys[i].direction = 0;
+		}
 		enemys[i].colbox.x1 += enemys[i].vx;
 		enemys[i].colbox.x2 += enemys[i].vx;
 		enemys[i].colbox.y1 += enemys[i].vy;
