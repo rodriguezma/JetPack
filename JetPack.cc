@@ -794,10 +794,7 @@ void EnemiesMovement(){
 		auxcolbox.y2 += enemys[i].vy;
 		if(ColPlatforms(auxcolbox)){
 			enemys[i].vy = - enemys[i].vy;
-			if(enemys[i].direction == 0)
-				enemys[i].direction = 1;
-			else
-				enemys[i].direction = 0;
+			
 		}
 		enemys[i].colbox.x1 += enemys[i].vx;
 		enemys[i].colbox.x2 += enemys[i].vx;
