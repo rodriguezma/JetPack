@@ -11,7 +11,7 @@ esat::SpriteHandle map,spsheet,*explode;
 esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
 
-int level=1;  // Tipo de enemigos por nivel
+int level=1, ex_level=1;  // Tipo de enemigos por nivel
 int time_=0;
 int op=1,enemyamount;
 int current_shots=0;
@@ -317,7 +317,6 @@ void Initiate(){
   SelectEnemiesLevel();
   for (int i = 0; i < 6; ++i){
     enemys[i].color = rand()%4;
-    //enemys[i].direction = rand()%2;
     enemys[i]. animation = 0;
     enemys[i].alive = false;
   }
@@ -501,6 +500,18 @@ void Enemies23_47 (enemigos *marcianitos){
   }
 }
 
+void EnemySprite (enemigos *Tmarcianos){
+
+  if (level == 1){
+    Enemies1(Tmarcianos);
+
+  } else if (level == 5 || level ==6 || level == 8) {
+    Enemies_568(Tmarcianos);
+
+  } else Enemies23_47(Tmarcianos);
+
+}
+
 
 void Shot (esat::SpecialKey key){
 	if (esat::IsSpecialKeyDown(key)){
@@ -511,7 +522,7 @@ void Shot (esat::SpecialKey key){
 
 		(*auxshot).direction = (*player).direction;
 		(*auxshot).colbox.x1 = (*player).x;
-		(*auxshot).colbox.y1 = (*player).y;
+		(*auxshot).colbox.y1 = (*player).y + ((esat::SpriteHeight(player->sprite[player -> animation]))/2);
 		(*auxshot).colbox.x2 = (*auxshot).colbox.x1 + 50;
 		(*auxshot).colbox.y2 = (*auxshot).colbox.y1 + 10;
 
@@ -795,7 +806,7 @@ void EnemiesMovement(){
 		auxcolbox.y2 += enemys[i].vy;
 		if(ColPlatforms(auxcolbox)){
 			enemys[i].vy = - enemys[i].vy;
-			
+
 		}
 		enemys[i].colbox.x1 += enemys[i].vx;
 		enemys[i].colbox.x2 += enemys[i].vx;
@@ -819,12 +830,13 @@ void EnemiesLimits(){
 void DrawEnemies(){
 
   for (int i = 0; i < 6; ++i){
-    Enemies1(enemys+i);
+    EnemySprite(enemys+i);
     if (enemys[i].alive){
       esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
-      if (time_ % 5 ==0)
+      if (time_ % 5 ==0 && level < 4)
         ++enemys[i].animation %= 2;
-    }
+
+    }else enemys[i].color = rand()%4;
   }
 
 }
@@ -942,7 +954,7 @@ int esat::main(int argc, char **argv) {
 		Fly(player,esat::kSpecialKey_Up);
     	Shot(esat::kSpecialKey_Space);
     	ShotsMovement();
-    	
+
     	EnemiesMovement();
     	EnemiesLimits();
 
