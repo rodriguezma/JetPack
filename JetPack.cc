@@ -12,15 +12,15 @@ esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
 esat::SpriteHandle *ship, *shipieces;
 
-int level=1; // Nivel Enemigo (1-8)
-int ex_level=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
+int level=0; // Nivel Enemigo (0-7)
+int ex_level=4; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 int time_=0;
 int op=1;
 int current_shots=0;
 bool multiplayer=false, game_start=false;
 
 const int windowx=1000,windowy=750,gravity=2;
-const int k_current_enemies = 12;
+const int k_current_enemies = 25;
 
 struct cuadrado{
   float x1,x2,y1,y2;
@@ -65,7 +65,7 @@ struct nave{
   float x,y;
   cuadrado colbox;
   int points=100;
-  char pickup,fuel=0,piece;
+  char pickup = 0,fuel=0,piece = 0;
   esat::SpriteHandle sprite;
 };
 struct nave *rocket;
@@ -149,7 +149,7 @@ void SelectEnemiesLevel(){
 
   switch (level){
 
-    case 1:{
+    case 0:{
       martians = (esat::SpriteHandle*) calloc (16,sizeof(esat::SpriteHandle));
       // TIPO 1
       //Verde
@@ -175,7 +175,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 2:{
+    case 1:{
       martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
       //TIPO 2
       //Verde
@@ -193,7 +193,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 3:{
+    case 2:{
       martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
       //TIPO 3
       //Verde
@@ -211,7 +211,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 4:{
+    case 3:{
       martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
       //TIPO 4
       //Verde
@@ -229,7 +229,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 5:{
+    case 4:{
       martians = (esat::SpriteHandle*) realloc (martians,4*sizeof(esat::SpriteHandle));
       //TIPO 5
       //Verde
@@ -243,7 +243,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 6:{
+    case 5:{
       martians = (esat::SpriteHandle*) realloc (martians,4*sizeof(esat::SpriteHandle));
       //TIPO 6
       //Verde
@@ -257,7 +257,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 7:{
+    case 6:{
       martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
       //TIPO 7
       //Verde
@@ -275,7 +275,7 @@ void SelectEnemiesLevel(){
     break;
     }
 
-    case 8:{
+    case 7:{
       martians = (esat::SpriteHandle*) realloc (martians,4*sizeof(esat::SpriteHandle));
       //TIPO 8
       //Verde
@@ -295,7 +295,7 @@ void SelectEnemiesLevel(){
 // Utilizada al principio de cada nivel para reservar la memoria necesaria
 void SpriteEnemyReserve(){
 
-  if (level == 5 || level == 6 || level == 8){
+  if (level == 4 || level == 5 || level == 7){
     for (int i = 0; i < k_current_enemies; ++i){
       ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),sizeof(esat::SpriteHandle));
 
@@ -385,11 +385,14 @@ void InitShip(){
   if (ex_level == 0 || ex_level%4 == 0){
     rocket = (struct nave*) realloc (rocket, 3*sizeof(struct nave));
     rocket[0].sprite = shipieces[0];
-    rocket[0].colbox = {660,710,670,720};
+    rocket[0].colbox = {662,710,670,720};
+    rocket[0].piece = 0;
     rocket[1].sprite = shipieces[2];
     rocket[1].colbox = {508,558,325,375};
+    rocket[1].piece = 0;
     rocket[2].sprite = shipieces[3];
     rocket[2].colbox = {190,240,230,280};
+    rocket[2].piece = 0;
 
   }else {
     rocket = (struct nave*) realloc (rocket, sizeof(struct nave));
@@ -425,7 +428,7 @@ void Initiate(){
   objects[4].points=250;
   objects[5].points=250;
 
-  //enemigos
+  //ENEMIGOS
   SelectEnemiesLevel();
   for (int i = 0; i < k_current_enemies; ++i){
     enemys[i].color = rand()%4;
@@ -433,6 +436,7 @@ void Initiate(){
     enemys[i].alive = false;
   }
 
+  //NAVE
   InitShip();
 }
 
@@ -472,10 +476,79 @@ bool ColPlatforms(cuadrado colbox){
 }
 
 
+void DrawPiece(nave *ship){
 
-//Función para imprimir sprites de nivel 1 (moco)
-//Se tiene en cuenta color,direccion y animación
-void Enemies1 (enemigos *marcianitos){
+
+  if (ship -> pickup == 1){
+    ship -> colbox.x1 = player -> colbox.x1;
+    ship -> colbox.y1 = player -> colbox.y1;
+    ship -> colbox.x2 = player -> colbox.x2;
+    ship -> colbox.y2 = player -> colbox.y2;
+
+  }else if (Col(player -> colbox,ship -> colbox) && ship -> piece == 0){
+    ship -> pickup = 1;
+  }
+}
+
+
+void LeavePiece(nave *ship){
+
+  if (ship -> pickup == 1 && ship -> colbox.x1 == rocket[0].colbox.x1){
+    ship -> pickup = 0;
+    ship -> piece = 1;
+
+  }else if (ship -> piece == 1){
+    ship -> colbox.y1 += player -> vy;
+    ship -> colbox.y2 += player -> vy;
+
+  }
+
+}
+
+void AddPiece(nave *spaceship){
+
+  if (Col(spaceship -> colbox, rocket[0].colbox)){
+    spaceship -> piece = 5;
+    ++rocket[0].piece;
+
+    if (rocket[0].piece < 2){
+      rocket[0].colbox.y1 -= 50;
+      rocket[0].sprite = shipieces[rocket[0].piece];
+
+    }else {
+      rocket[0].fuel = 0;
+      rocket[0].colbox.y1 -= 83;
+      rocket[0].sprite = ship[rocket[0].fuel];
+
+  }
+    spaceship -> colbox.x1 = 0;
+    spaceship -> colbox.x2 = 0;
+    spaceship -> colbox.y1 = 0;
+    spaceship -> colbox.y2 = 0;
+    esat::SpriteRelease(spaceship -> sprite);
+
+  }
+
+}
+
+void Pieces(nave *piece1, nave *piece2){
+
+  if (rocket[0].piece == 0){
+    DrawPiece (piece1);
+    LeavePiece(piece1);
+    AddPiece(piece1);
+
+  } else if (rocket[0].piece == 1){
+    DrawPiece (piece2);
+    LeavePiece(piece2);
+    AddPiece(piece2);
+
+  }
+
+}
+
+
+void Enemies0 (enemigos *marcianitos){
 
       switch (marcianitos -> color){
 
@@ -529,11 +602,7 @@ void Enemies1 (enemigos *marcianitos){
       }
   }
 
-
-//Función para los sprites enemigos de nivel 5, 6 y 8
-//Solo se tiene en cuenta el color,
-// ya que ni cambian de animación ni de sprite con la direccion
-void Enemies_568 (enemigos *marcianitos){
+void Enemies_457 (enemigos *marcianitos){
 
   switch (marcianitos -> color){
 
@@ -561,14 +630,7 @@ void Enemies_568 (enemigos *marcianitos){
 }
 
 
-//Función para los sprites enemigos de nivel 2,3,4 y 7
-//Para los enemigos de nivel 2 y 3, no se tendra en cuenta la dirección, solo color y animación
-//Para los enemigos de nivel 4 y 7 (pajaros y naves), se debe tener en cuenta que,
-//al cambiar la animación cambiará la dirección del sprite
-//En estos niveles vendría bien igualar la animación a la dirección constantemente,
-//en lugar de incrementarla
-
-void Enemies23_47 (enemigos *marcianitos){
+void Enemies12_36 (enemigos *marcianitos){
 
   switch (marcianitos -> color){
 
@@ -600,13 +662,13 @@ void Enemies23_47 (enemigos *marcianitos){
 
 void EnemySprite (enemigos *Tmarcianos){
 
-  if (level == 1){
-    Enemies1(Tmarcianos);
+  if (level == 0){
+    Enemies0(Tmarcianos);
 
-  } else if (level == 5 || level ==6 || level == 8) {
-    Enemies_568(Tmarcianos);
+  } else if (level == 4 || level == 5 || level == 7) {
+    Enemies_457(Tmarcianos);
 
-  } else Enemies23_47(Tmarcianos);
+  } else Enemies12_36(Tmarcianos);
 
 }
 
@@ -627,6 +689,7 @@ void Shot (esat::SpecialKey key){
 	}
 }
 
+
 void ShotsMovement (){
 	disparos *auxshot = shots;
 
@@ -644,6 +707,8 @@ void ShotsMovement (){
 		auxshot++;
 	}
 }
+
+
 
 void DrawShoots (){
 	disparos *auxshot = shots;
@@ -744,6 +809,7 @@ void PlayerSprites(spaceman *Player){
 	}
 }
 
+
 void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey dir1){
 
 	if (esat::IsSpecialKeyPressed(dir0)) {
@@ -784,6 +850,7 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 	}
 
 }
+
 
 void ItemSpawn(){
 	int Rand_;
@@ -833,6 +900,7 @@ void ItemSpawn(){
 			break;//radioactive
 	}
 }
+
 
 void DrawItems(){
 
@@ -931,9 +999,9 @@ void DrawEnemies(){
     EnemySprite(enemys+i);
     if (enemys[i].alive){
       esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
-      if (time_ % 5 ==0 && level < 4){
+      if (time_ % 5 ==0 && level < 3){
         ++enemys[i].animation %= 2;
-      }else if (level == 4 || level == 7) enemys[i].animation = enemys[i].direction;
+      }else if (level == 3 || level == 6) enemys[i].animation = enemys[i].direction;
 
     }else enemys[i].color = rand()%4;
   }
@@ -943,8 +1011,11 @@ void DrawEnemies(){
 void DrawShip(){
 
   if (ex_level == 0 || ex_level%4 == 0){
-    for (int i=0; i<3; ++i)
+    for (int i=0; i<3; ++i){
+      if (rocket[i].piece != 5)
       esat::DrawSprite(rocket[i].sprite, rocket[i].colbox.x1, rocket[i].colbox.y1);
+
+    }
 
   }else esat::DrawSprite(rocket[0].sprite, rocket[0].colbox.x1, rocket[0].colbox.y1);
 
@@ -961,15 +1032,14 @@ void UpdateFrame(){
 	DrawCol(platforms[1].colbox);
 	DrawCol(platforms[2].colbox);
 	DrawCol(platforms[3].colbox);
+  DrawCol(rocket[1].colbox);
+  DrawCol(rocket[0].colbox);
 
 	for(int i=0;i<k_current_enemies;i++){
 		DrawCol(enemys[i].colbox);
 	}
 
-
-
 }
-
 
 void FreeSprites(){
 	free(playerwalk);
@@ -1145,6 +1215,9 @@ int esat::main(int argc, char **argv) {
 		Fly(player,esat::kSpecialKey_Up);
     	Shot(esat::kSpecialKey_Space);
     	ShotsMovement();
+
+      if (ex_level == 0 || ex_level%4 ==0)
+        Pieces(&rocket[1],&rocket[2]);
 
     	EnemiesMovement();
     	EnemiesLimits();
