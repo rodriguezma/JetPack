@@ -10,8 +10,10 @@
 esat::SpriteHandle map,spsheet,*explode;
 esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
+esat::SpriteHandle *ship, *shipieces;
 
-int level=1, ex_level=1;  // Tipo de enemigos por nivel
+int level=1; // Nivel Enemigo (1-8)
+int ex_level=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 int time_=0;
 int op=1;
 int current_shots=0;
@@ -290,6 +292,113 @@ void SelectEnemiesLevel(){
 
 }
 
+// Utilizada al principio de cada nivel para reservar la memoria necesaria
+void SpriteEnemyReserve(){
+
+  if (level == 5 || level == 6 || level == 8){
+    for (int i = 0; i < k_current_enemies; ++i){
+      ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),sizeof(esat::SpriteHandle));
+
+    }
+
+  } else {
+    for (int i = 0; i < k_current_enemies; ++i){
+      ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),2*sizeof(esat::SpriteHandle));
+    }
+  }
+}
+
+
+void SpriteShipLevel(){
+
+  if (ex_level < 4){
+    //NAVE 1
+    ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
+    ship[0] = esat::SubSprite(spsheet,3,854,50,183); //Blanco
+    ship[1] = esat::SubSprite(spsheet,51,854,50,183);//Pintado 1
+    ship[2] = esat::SubSprite(spsheet,101,854,50,183);//Pintado 2
+    ship[3] = esat::SubSprite(spsheet,152,854,50,183);//Pintado 3
+    ship[4] = esat::SubSprite(spsheet,203,854,50,183);//Pintado 4
+    ship[5] = esat::SubSprite(spsheet,254,854,50,183);//Morado
+
+    shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
+    shipieces[0] = esat::SubSprite(spsheet,239,556,50,50);//Pieza Base
+    shipieces[1] = esat::SubSprite(spsheet,233,725,50,98);//Medio Cuerpo
+    shipieces[2] = esat::SubSprite(spsheet,240,487,50,50);//Pieza Mitad
+    shipieces[3] = esat::SubSprite(spsheet,238,420,50,50);//Pieza Cabeza
+
+
+  }else if (ex_level < 8){
+    //NAVE 2
+    ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
+    ship[0] = esat::SubSprite(spsheet,308,853,50,183);
+    ship[1] = esat::SubSprite(spsheet,362,853,50,183);
+    ship[2] = esat::SubSprite(spsheet,414,853,50,183);
+    ship[3] = esat::SubSprite(spsheet,466,853,50,183);
+    ship[4] = esat::SubSprite(spsheet,518,853,50,183);
+    ship[5] = esat::SubSprite(spsheet,572,853,50,183);
+
+    shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
+    shipieces[0] = esat::SubSprite(spsheet,336,554,50,50);//Pieza Base
+    shipieces[1] = esat::SubSprite(spsheet,327,720,50,98);//Medio Cuerpo
+    shipieces[2] = esat::SubSprite(spsheet,336,488,50,50);//Pieza Mitad
+    shipieces[3] = esat::SubSprite(spsheet,333,420,50,50);//Pieza Cabeza
+
+  }else if (ex_level < 12){
+    //NAVE 3
+    ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
+    ship[0] = esat::SubSprite(spsheet,624,851,50,186);
+    ship[1] = esat::SubSprite(spsheet,676,851,50,186);
+    ship[2] = esat::SubSprite(spsheet,730,851,50,186);
+    ship[3] = esat::SubSprite(spsheet,782,851,50,186);
+    ship[4] = esat::SubSprite(spsheet,834,851,50,186);
+    ship[5] = esat::SubSprite(spsheet,888,851,50,186);
+
+    shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
+    shipieces[0] = esat::SubSprite(spsheet,460,558,50,50);//Pieza Base
+    shipieces[1] = esat::SubSprite(spsheet,455,726,50,98);//Medio Cuerpo
+    shipieces[2] = esat::SubSprite(spsheet,460,489,50,50);//Pieza Mitad
+    shipieces[3] = esat::SubSprite(spsheet,460,420,50,50);//Pieza Cabeza
+
+  }else {
+    //NAVE 4
+    ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
+    ship[0] = esat::SubSprite(spsheet,942,853,50,183);
+    ship[1] = esat::SubSprite(spsheet,996,853,50,183);
+    ship[2] = esat::SubSprite(spsheet,1050,853,50,183);
+    ship[3] = esat::SubSprite(spsheet,1104,853,50,183);
+    ship[4] = esat::SubSprite(spsheet,1056,660,50,183);
+    ship[5] = esat::SubSprite(spsheet,1108,660,50,183);
+
+    shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
+    shipieces[0] = esat::SubSprite(spsheet,587,555,50,50);//Pieza Base
+    shipieces[1] = esat::SubSprite(spsheet,580,724,50,98);//Medio Cuerpo
+    shipieces[2] = esat::SubSprite(spsheet,587,490,50,50);//Pieza Mitad
+    shipieces[3] = esat::SubSprite(spsheet,587,420,50,50);//Pieza Cabeza
+
+  }
+}
+
+
+void InitShip(){
+
+  if (ex_level == 0 || ex_level%4 == 0){
+    rocket = (struct nave*) realloc (rocket, 3*sizeof(struct nave));
+    rocket[0].sprite = shipieces[0];
+    rocket[0].colbox = {660,710,670,720};
+    rocket[1].sprite = shipieces[2];
+    rocket[1].colbox = {508,558,325,375};
+    rocket[2].sprite = shipieces[3];
+    rocket[2].colbox = {190,240,230,280};
+
+  }else {
+    rocket = (struct nave*) realloc (rocket, sizeof(struct nave));
+    rocket[0].sprite = ship[0];
+    rocket[0].colbox = {660,710,535,718};
+  }
+
+}
+
 
 void Initiate(){
   player -> x = 500;
@@ -323,6 +432,8 @@ void Initiate(){
     enemys[i]. animation = 0;
     enemys[i].alive = false;
   }
+
+  InitShip();
 }
 
 void DrawCol(cuadrado colbox){
@@ -360,22 +471,6 @@ bool ColPlatforms(cuadrado colbox){
 	return false;
 }
 
-
-// Utilizada al principio de cada nivel para reservar la memoria necesaria
-void SpriteEnemyReserve(){
-
-  if (level == 5 || level == 6 || level == 8){
-    for (int i = 0; i < k_current_enemies; ++i){
-      ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),sizeof(esat::SpriteHandle));
-
-    }
-
-  } else {
-    for (int i = 0; i < k_current_enemies; ++i){
-      ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),2*sizeof(esat::SpriteHandle));
-    }
-  }
-}
 
 
 //Función para imprimir sprites de nivel 1 (moco)
@@ -845,11 +940,22 @@ void DrawEnemies(){
 
 }
 
+void DrawShip(){
+
+  if (ex_level == 0 || ex_level%4 == 0){
+    for (int i=0; i<3; ++i)
+      esat::DrawSprite(rocket[i].sprite, rocket[i].colbox.x1, rocket[i].colbox.y1);
+
+  }else esat::DrawSprite(rocket[0].sprite, rocket[0].colbox.x1, rocket[0].colbox.y1);
+
+}
+
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
 	esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
   DrawEnemies();
 	DrawShoots();
+  DrawShip();
 	DrawCol((*player).colbox);
 	DrawCol(platforms[0].colbox);
 	DrawCol(platforms[1].colbox);
@@ -874,6 +980,9 @@ void FreeSprites(){
   free(enemys);
   free(player -> sprite);
 	free(player);
+  free(ship);
+  free(shipieces);
+  free(rocket);
 	free(objects);
 	free(explode);
 	esat::SpriteRelease(spsheet);
@@ -991,7 +1100,7 @@ void Interface(spaceman *Player){
 		itoa((Player+1)->lives,live2,10);
 		esat::DrawText(755,35,live2);
 	}
-	
+
 	free(score1);
 	free(score2);
 	free(live1);
@@ -1012,8 +1121,10 @@ int esat::main(int argc, char **argv) {
   esat::DrawSetTextFont("Recursos/fonts/Pixelopolis 9000.ttf");
 
 	CutInitialSprites();
+  SpriteShipLevel();
 	Initiate();
   SpriteEnemyReserve();
+
 
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
