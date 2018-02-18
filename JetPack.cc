@@ -13,12 +13,12 @@ esat::SpriteHandle *martians;
 
 int level=1, ex_level=1;  // Tipo de enemigos por nivel
 int time_=0;
-int op=1,enemyamount;
+int op=1;
 int current_shots=0;
-int current_enemies=0;
 bool multiplayer=false, game_start=false;
 
 const int windowx=1000,windowy=750,gravity=2;
+const int k_current_enemies = 12;
 
 struct cuadrado{
   float x1,x2,y1,y2;
@@ -97,8 +97,8 @@ void CutInitialSprites(){
   player->sprite=(esat::SpriteHandle*)malloc(4*sizeof(esat::SpriteHandle));
 
 
-  enemys = (struct enemigos*) malloc (6*sizeof(struct enemigos));
-  for (int i=0; i<6; ++i){
+  enemys = (struct enemigos*) malloc (k_current_enemies*sizeof(struct enemigos));
+  for (int i=0; i<k_current_enemies; ++i){
     (enemys+i) -> sprite = (esat::SpriteHandle*)calloc(2,sizeof(esat::SpriteHandle));
   }
 
@@ -192,6 +192,7 @@ void SelectEnemiesLevel(){
     }
 
     case 3:{
+      martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
       //TIPO 3
       //Verde
       martians[0] = esat::SubSprite(spsheet,744,436,52,52);
@@ -209,6 +210,7 @@ void SelectEnemiesLevel(){
     }
 
     case 4:{
+      martians = (esat::SpriteHandle*) realloc (martians,8*sizeof(esat::SpriteHandle));
       //TIPO 4
       //Verde
       martians[0] = esat::SubSprite(spsheet,681,515,52,28); // izq
@@ -240,6 +242,7 @@ void SelectEnemiesLevel(){
     }
 
     case 6:{
+      martians = (esat::SpriteHandle*) realloc (martians,4*sizeof(esat::SpriteHandle));
       //TIPO 6
       //Verde
       martians[0] = esat::SubSprite(spsheet,744,608,52,52);
@@ -315,7 +318,7 @@ void Initiate(){
 
   //enemigos
   SelectEnemiesLevel();
-  for (int i = 0; i < 6; ++i){
+  for (int i = 0; i < k_current_enemies; ++i){
     enemys[i].color = rand()%4;
     enemys[i]. animation = 0;
     enemys[i].alive = false;
@@ -362,13 +365,13 @@ bool ColPlatforms(cuadrado colbox){
 void SpriteEnemyReserve(){
 
   if (level == 5 || level == 6 || level == 8){
-    for (int i = 0; i < 6; ++i){
+    for (int i = 0; i < k_current_enemies; ++i){
       ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),sizeof(esat::SpriteHandle));
 
     }
 
   } else {
-    for (int i = 0; i < 6; ++i){
+    for (int i = 0; i < k_current_enemies; ++i){
       ((enemys+i) -> sprite) = (esat::SpriteHandle*)realloc(((enemys+i) -> sprite),2*sizeof(esat::SpriteHandle));
     }
   }
@@ -767,7 +770,7 @@ void DrawItems(){
 void EnemiesSpawn(){
 	float time = esat::Time();
 	srand(time);
-	for(int i =0;i<6;i++){
+	for(int i =0;i<k_current_enemies;i++){
 		if(!enemys[i].alive){
 			enemys[i].alive = true;
 			if(rand()%2==0){
@@ -790,7 +793,7 @@ void EnemiesSpawn(){
 }
 
 void EnemiesMovement(){
-	for(int i=0;i<6;i++){
+	for(int i=0;i<k_current_enemies;i++){
 		cuadrado auxcolbox = enemys[i].colbox;
 		auxcolbox.x1 += enemys[i].vx;
 		auxcolbox.x2 += enemys[i].vx;
@@ -816,7 +819,7 @@ void EnemiesMovement(){
 }
 
 void EnemiesLimits(){
-	for(int i=0;i<6;i++){
+	for(int i=0;i<k_current_enemies;i++){
 		if(enemys[i].colbox.x1>1000){
 			enemys[i].colbox.x1 = -50;
 			enemys[i].colbox.x2 = 0;
@@ -829,12 +832,13 @@ void EnemiesLimits(){
 
 void DrawEnemies(){
 
-  for (int i = 0; i < 6; ++i){
+  for (int i = 0; i < k_current_enemies; ++i){
     EnemySprite(enemys+i);
     if (enemys[i].alive){
       esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
-      if (time_ % 5 ==0 && level < 4)
+      if (time_ % 5 ==0 && level < 4){
         ++enemys[i].animation %= 2;
+      }else if (level == 4 || level == 7) enemys[i].animation = enemys[i].direction;
 
     }else enemys[i].color = rand()%4;
   }
@@ -852,7 +856,7 @@ void UpdateFrame(){
 	DrawCol(platforms[2].colbox);
 	DrawCol(platforms[3].colbox);
 
-	for(int i=0;i<6;i++){
+	for(int i=0;i<k_current_enemies;i++){
 		DrawCol(enemys[i].colbox);
 	}
 
@@ -865,7 +869,7 @@ void FreeSprites(){
 	free(playerwalk);
 	free(playerfly);
   free(martians);
-  for (int i = 0; i < 6; ++i)
+  for (int i = 0; i < k_current_enemies; ++i)
   free(enemys[i].sprite);
   free(enemys);
   free(player -> sprite);
@@ -918,6 +922,7 @@ void Menu(){
     if(op==2){
       multiplayer=true;
     }
+
   }
 
 }
@@ -940,9 +945,10 @@ int esat::main(int argc, char **argv) {
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
 
-	if(!game_start){
-		Menu();
-	}
+  if(!game_start){
+    Menu();
+  }
+
 
 	esat::DrawBegin();
     esat::DrawClear(0,0,0);
