@@ -927,6 +927,80 @@ void Menu(){
 
 }
 
+void Interface(spaceman *Player){
+
+	char *score1,*score2,*live1,*live2;
+
+	esat::DrawSetFillColor(255,255,0);
+	score1=(char*)calloc(6,sizeof(char));
+	score2=(char*)calloc(6,sizeof(char));
+	live1=(char*)calloc(1,sizeof(char));
+	live2=(char*)calloc(1,sizeof(char));
+
+	itoa(Player->points,score1,10);
+	itoa((Player+1)->points,score2,10);
+
+	if(Player->points<10){
+		esat::DrawText(100,70,"00000");
+		esat::DrawText(175,70,score1);
+	}else if(Player->points<100){
+		esat::DrawText(100,70,"0000");
+		esat::DrawText(160,70,score1);
+	}else if(Player->points<1000){
+		esat::DrawText(100,70,"000");
+		esat::DrawText(145,70,score1);
+	}else if(Player->points<10000){
+		esat::DrawText(100,70,"00");
+		esat::DrawText(130,70,score1);
+	}else if(Player->points<100000){
+		esat::DrawText(100,70,"0");
+		esat::DrawText(115,70,score1);
+	}else{
+		esat::DrawText(100,70,score1);
+	}
+
+	esat::DrawText(455,70,"999999");
+
+	if((Player+1)->points<10){
+		esat::DrawText(845,70,"00000");
+		esat::DrawText(920,70,score2);
+	}else if((Player+1)->points<100){
+		esat::DrawText(845,70,"0000");
+		esat::DrawText(915,70,score2);
+	}else if((Player+1)->points<1000){
+		esat::DrawText(845,70,"000");
+		esat::DrawText(890,70,score2);
+	}else if((Player+1)->points<10000){
+		esat::DrawText(845,70,"00");
+		esat::DrawText(875,70,score2);
+	}else if((Player+1)->points<100000){
+		esat::DrawText(845,70,"0");
+		esat::DrawText(860,70,score2);
+	}else{
+		esat::DrawText(845,70,score2);
+	}
+
+	esat::DrawSetFillColor(255,255,255);
+
+	itoa(Player->lives,live1,10);
+
+	esat::DrawText(250,35,live1);
+
+
+	if(multiplayer){
+		itoa((Player+1)->lives,live2,10);
+		esat::DrawText(755,35,live2);
+	}
+	
+	free(score1);
+	free(score2);
+	free(live1);
+	if(multiplayer){
+		free(live2);
+	}
+
+}
+
 int esat::main(int argc, char **argv) {
 
   double current_time,last_time;
