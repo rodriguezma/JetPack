@@ -13,7 +13,7 @@ esat::SpriteHandle *martians;
 esat::SpriteHandle *ship, *shipieces;
 
 int level=0; // Nivel Enemigo (0-7)
-int ex_level=8; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
+int ex_level=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 int time_=0;
 int op=1;
 int current_shots=0;
@@ -54,7 +54,7 @@ struct enemigos{
   float x,y,vx,vy;
   cuadrado colbox;
   int points;
-  bool alive;
+  bool alive, dead;
   char explodeanim = 0;
   char color;
   esat::SpriteHandle *sprite;
@@ -429,13 +429,15 @@ void PlayerInit(){
     (player+1) -> vy = 4;
     (player+1) -> colbox = {500,545,642,715};
   }
-  
+
 }
 
 
 void Initiate(){
 
   PlayerInit();
+  player -> lives = 3;
+  player -> points = 0;
 
   //PLATAFORMAS
   platforms=(struct terreno*)malloc(5*sizeof(struct terreno));
@@ -459,6 +461,7 @@ void Initiate(){
     enemys[i].color = rand()%4;
     enemys[i]. animation = 0;
     enemys[i].alive = false;
+    enemys[i].dead = false;
   }
 
   //NAVE
@@ -868,22 +871,21 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 }
 
 
-void PlayerColision(){  //Colisiones jugador/enemigos
+void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 
   for (int i = 0; i < k_current_enemies; ++i){
-    if (Col(player->colbox, enemys[i].colbox) && !player->dead){
-      player -> dead = true;
-      player -> explodeanim = 0;
-      time_ = 0;
-      --player -> lives;
+    if (Col(character->colbox, enemys[i].colbox) && !character->dead && !enemys[i].dead){
+      character -> dead = true;
+      character -> explodeanim = 0;
+      --character -> lives;
     }
   }
 
-  if (player -> dead && player -> explodeanim >= 2 && time_%8 == 0){
+  if (character -> dead && character -> explodeanim >= 2 && time_%10 == 0){
     PlayerInit();
 
-  }else if (player -> dead && time_%8 == 0){
-      ++player -> explodeanim;
+  }else if (character -> dead && time_%10 == 0){
+    ++character -> explodeanim;
   }
 
 }
@@ -994,6 +996,7 @@ void EnemiesSpawn(){
 
 void EnemiesMovement(){
 	for(int i=0;i<k_current_enemies;i++){
+  if (!enemys[i].dead){
 		cuadrado auxcolbox = enemys[i].colbox;
 		auxcolbox.x1 += enemys[i].vx;
 		auxcolbox.x2 += enemys[i].vx;
@@ -1016,6 +1019,8 @@ void EnemiesMovement(){
 		enemys[i].colbox.y1 += enemys[i].vy;
 		enemys[i].colbox.y2 += enemys[i].vy;
 	}
+
+  }
 }
 
 void EnemiesLimits(){
@@ -1030,20 +1035,43 @@ void EnemiesLimits(){
 	}
 }
 
+void EnemiesDead(){
+
+  for (int i = 0; i < k_current_enemies; ++i){
+    for (int k = 0; k < current_shots; ++k){
+
+      if (Col(enemys[i].colbox,shots[k].colbox) && !enemys[i].dead){
+        enemys[i].dead = true;
+        enemys[i].explodeanim = 0;
+
+      }else if (enemys[i].dead && enemys[i].explodeanim > 2){
+         enemys[i].color = rand()%4;
+         enemys[i].explodeanim = 0;
+         enemys[i].dead = false;
+         enemys[i].alive = false;
+       }
+    }
+  }
+}
+
+
 void DrawEnemies(){
 
   for (int i = 0; i < k_current_enemies; ++i){
-    EnemySprite(enemys+i);
-    if (enemys[i].alive){
+    if (!enemys[i].dead){
+      EnemySprite(enemys+i);
       esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
       if (time_ % 5 ==0 && level < 3){
         ++enemys[i].animation %= 2;
       }else if (level == 3 || level == 6) enemys[i].animation = enemys[i].direction;
 
-    }else enemys[i].color = rand()%4;
+    }else {
+      esat::DrawSprite(explode[enemys[i].explodeanim], enemys[i].colbox.x1, enemys[i].colbox.y1);
+      if (time_%10 == 0) ++enemys[i].explodeanim;
+    }
   }
-
 }
+
 
 void DrawShip(){
 
@@ -1057,6 +1085,7 @@ void DrawShip(){
   }else esat::DrawSprite(rocket[0].sprite, rocket[0].colbox.x1, rocket[0].colbox.y1);
 
 }
+
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
@@ -1084,11 +1113,8 @@ void FreeSprites(){
 	free(playerfly);
   free(martians);
   for (int i = 0; i < k_current_enemies; ++i){
-    esat::SpriteRelease(enemys[i].sprite);
-  }
-
-  for (int i = 0; i < k_current_enemies; ++i){
-    free(enemys[i].sprite);
+    //esat::SpriteRelease(enemys[i].sprite);
+      free(enemys[i].sprite);
   }
 
   free(enemys);
@@ -1258,13 +1284,14 @@ int esat::main(int argc, char **argv) {
     esat::DrawClear(0,0,0);
 
 	if(game_start){
+    EnemiesDead();
 		EnemiesSpawn();
 		PlayerSprites(player);
     if (!player -> dead){
   		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
   		Fly(player,esat::kSpecialKey_Up);
     }
-    PlayerColision();
+      PlayerDead(player);
     	Shot(esat::kSpecialKey_Space);
     	ShotsMovement();
 
