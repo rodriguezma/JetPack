@@ -416,6 +416,20 @@ void PlayerInit(){
   player -> vx = 6;
   player -> vy = 4;
   player -> colbox = {500,545,642,715};
+
+  if(multiplayer){
+    (player+1) -> x = 500;
+    (player+1) -> y = 642;
+    (player+1) -> direction = 0;
+    (player+1) -> gravity = false;
+    (player+1) -> animation = 0;
+    (player+1) -> dead = false;
+    (player+1) -> explodeanim = 0;
+    (player+1) -> vx = 6;
+    (player+1) -> vy = 4;
+    (player+1) -> colbox = {500,545,642,715};
+  }
+  
 }
 
 
@@ -1142,12 +1156,15 @@ void Interface(spaceman *Player){
 
 	esat::DrawSetFillColor(255,255,0);
 	score1=(char*)calloc(6,sizeof(char));
-	score2=(char*)calloc(6,sizeof(char));
 	live1=(char*)calloc(1,sizeof(char));
-	live2=(char*)calloc(1,sizeof(char));
 
-	itoa(Player->points,score1,10);
-	itoa((Player+1)->points,score2,10);
+  itoa(Player->points,score1,10);
+
+  if(multiplayer){
+    score2=(char*)calloc(6,sizeof(char));
+    live2=(char*)calloc(1,sizeof(char));
+    itoa((Player+1)->points,score2,10);
+  }
 
 	if(Player->points<10){
 		esat::DrawText(100,70,"00000");
@@ -1170,24 +1187,26 @@ void Interface(spaceman *Player){
 
 	esat::DrawText(455,70,"999999");
 
-	if((Player+1)->points<10){
-		esat::DrawText(845,70,"00000");
-		esat::DrawText(920,70,score2);
-	}else if((Player+1)->points<100){
-		esat::DrawText(845,70,"0000");
-		esat::DrawText(915,70,score2);
-	}else if((Player+1)->points<1000){
-		esat::DrawText(845,70,"000");
-		esat::DrawText(890,70,score2);
-	}else if((Player+1)->points<10000){
-		esat::DrawText(845,70,"00");
-		esat::DrawText(875,70,score2);
-	}else if((Player+1)->points<100000){
-		esat::DrawText(845,70,"0");
-		esat::DrawText(860,70,score2);
-	}else{
-		esat::DrawText(845,70,score2);
-	}
+  if(multiplayer){
+    if((Player+1)->points<10){
+      esat::DrawText(845,70,"00000");
+      esat::DrawText(920,70,score2);
+    }else if((Player+1)->points<100){
+      esat::DrawText(845,70,"0000");
+      esat::DrawText(915,70,score2);
+    }else if((Player+1)->points<1000){
+      esat::DrawText(845,70,"000");
+      esat::DrawText(890,70,score2);
+    }else if((Player+1)->points<10000){
+      esat::DrawText(845,70,"00");
+      esat::DrawText(875,70,score2);
+    }else if((Player+1)->points<100000){
+      esat::DrawText(845,70,"0");
+      esat::DrawText(860,70,score2);
+    }else{
+      esat::DrawText(845,70,score2);
+    }
+  }
 
 	esat::DrawSetFillColor(255,255,255);
 
@@ -1198,13 +1217,13 @@ void Interface(spaceman *Player){
 
 	if(multiplayer){
 		itoa((Player+1)->lives,live2,10);
-		esat::DrawText(755,35,live2);
+		esat::DrawText(700,35,live2);
 	}
 
 	free(score1);
-	free(score2);
 	free(live1);
 	if(multiplayer){
+    free(score2);
 		free(live2);
 	}
 
@@ -1261,7 +1280,7 @@ int esat::main(int argc, char **argv) {
 		}
 		++time_;
 		UpdateFrame();
-
+    Interface(player);
 	}
 
     esat::DrawEnd();
