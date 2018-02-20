@@ -1065,6 +1065,16 @@ void DrawShip(){
 
 }
 
+
+void GameOver(spaceman *Player){
+	
+	if (Player -> lives <= 0 && !Player -> dead)
+		game_start = false;
+	
+	
+}
+
+
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
   if (!player -> dead){
@@ -1148,6 +1158,7 @@ void Menu(){
     op=2;
   }if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_5) || esat::IsKeyDown('5')){
     game_start=true;
+		Initiate();
     if(op==2){
       multiplayer=true;
     }
@@ -1286,6 +1297,7 @@ int esat::main(int argc, char **argv) {
 		}
 		++time_;
 		UpdateFrame();
+		GameOver(player);
     Interface(player);
 	}
 
