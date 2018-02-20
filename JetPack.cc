@@ -146,7 +146,6 @@ void CutInitialSprites(){
 
 }
 
-
 // Utililzada al principio de cada nivel para cargar sprites enemigos
 void SelectEnemiesLevel(){
 
@@ -311,7 +310,6 @@ void SpriteEnemyReserve(){
   }
 }
 
-
 void SpriteShipLevel(){
 
   if (ex_level < 4){
@@ -382,7 +380,6 @@ void SpriteShipLevel(){
   }
 }
 
-
 void InitShip(){
 
   if (ex_level == 0 || ex_level%4 == 0){
@@ -432,7 +429,6 @@ void PlayerInit(){
 
 }
 
-
 void Initiate(){
 
   PlayerInit();
@@ -479,7 +475,6 @@ void DrawCol(cuadrado colbox){
 	esat::DrawLine(colbox.x1 , colbox.y2 , colbox.x1 , colbox.y1);
 }
 
-
 bool Col (cuadrado colbox1, cuadrado colbox2){
 	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
 		return false;
@@ -489,7 +484,6 @@ bool Col (cuadrado colbox1, cuadrado colbox2){
 		return true;
 	}
 }
-
 
 bool ColPlatforms(cuadrado colbox){
 	terreno *auxplats = platforms;
@@ -502,7 +496,6 @@ bool ColPlatforms(cuadrado colbox){
 
 	return false;
 }
-
 
 void DrawPiece(nave *ship){
 
@@ -517,7 +510,6 @@ void DrawPiece(nave *ship){
     ship -> pickup = 1;
   }
 }
-
 
 void LeavePiece(nave *ship){
 
@@ -573,7 +565,6 @@ void Pieces(nave *piece1, nave *piece2){
   }
 
 }
-
 
 void Enemies0 (enemigos *marcianitos){
 
@@ -656,7 +647,6 @@ void Enemies_457 (enemigos *marcianitos){
   }
 }
 
-
 void Enemies12_36 (enemigos *marcianitos){
 
   switch (marcianitos -> color){
@@ -699,7 +689,6 @@ void EnemySprite (enemigos *Tmarcianos){
 
 }
 
-
 void Shot (esat::SpecialKey key){
 	if (esat::IsSpecialKeyDown(key)){
 
@@ -715,7 +704,6 @@ void Shot (esat::SpecialKey key){
 
 	}
 }
-
 
 void ShotsMovement (){
 	disparos *auxshot = shots;
@@ -735,8 +723,6 @@ void ShotsMovement (){
 	}
 }
 
-
-
 void DrawShoots (){
 	disparos *auxshot = shots;
 	esat::DrawSetStrokeColor(255,255,255);
@@ -746,7 +732,6 @@ void DrawShoots (){
 		auxshot++;
 	}
 }
-
 
 void Fly (spaceman *Player, esat::SpecialKey key){
 
@@ -784,7 +769,6 @@ void Fly (spaceman *Player, esat::SpecialKey key){
   }
 
 }
-
 
 void PlayerSprites(spaceman *Player){
 
@@ -831,7 +815,6 @@ void PlayerSprites(spaceman *Player){
 	}
 }
 
-
 void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey dir1){
 
 	if (esat::IsSpecialKeyPressed(dir0)) {
@@ -870,7 +853,6 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 	}
 }
 
-
 void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 
   for (int i = 0; i < k_current_enemies; ++i){
@@ -890,56 +872,54 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 
 }
 
-
 void ItemSpawn(){
 	int Rand_;
 	Rand_ = rand()%15 + 1;
 	switch(Rand_){
 		case 1,2,3,4,5:
 			objects[0].x = rand()%957;
-			objects[0].y = 0;
+			objects[0].y = 51;
 			objects[0].active=1;
 			objects[0].pickup=0;
 			objects[0].colbox={objects[0].x, objects[0].x + 52, objects[0].y, objects[0].y + 36};
 			break;//fuel
 		case 6,7:
 			objects[1].x = rand()%957;
-			objects[1].y = 0;
+			objects[1].y = 51;
 			objects[1].active=1;
 			objects[1].pickup=0;
 			objects[1].colbox={objects[1].x, objects[1].x + 44, objects[1].y, objects[1].y + 44};
 			break;//diamond
 		case 8,9:
 			objects[2].x = rand()%957;
-			objects[2].y = 0;
+			objects[2].y = 51;
 			objects[2].active=1;
 			objects[2].pickup=0;
 			objects[2].colbox={objects[2].x, objects[2].x + 52, objects[2].y, objects[2].y + 32};
 			break;//emerald
 		case 10,11:
 			objects[3].x = rand()%957;
-			objects[3].y = 0;
+			objects[3].y = 51;
 			objects[3].active=1;
 			objects[3].pickup=0;
 			objects[3].colbox={objects[3].x, objects[3].x + 52, objects[3].y, objects[3].y + 28};
 			break;//gold
 		case 12,13:
 			objects[4].x = rand()%957;
-			objects[4].y = 0;
+			objects[4].y = 51;
 			objects[4].active=1;
 			objects[4].pickup=0;
 			objects[4].colbox={objects[4].x, objects[4].x + 52, objects[4].y, objects[4].y + 44};
 			break;//atomic
 		case 14,15:
 			objects[5].x = rand()%957;
-			objects[5].y = 0;
+			objects[5].y = 51;
 			objects[5].active=1;
 			objects[5].pickup=0;
 			objects[5].colbox={objects[5].x, objects[5].x + 52, objects[5].y, objects[5].y + 40};
 			break;//radioactive
 	}
 }
-
 
 void DrawItems(){
 
@@ -961,6 +941,7 @@ void DrawItems(){
 			}
 			if(Col(objects[i].colbox, player -> colbox)){//Pickup other items
 				objects[i].pickup = 1;
+				player -> points+=objects[i].points;
 				if(i!=0){objects[i].active = 0;}
 			}
 			DrawCol(objects[i].colbox);
@@ -1054,7 +1035,6 @@ void EnemiesDead(){
   }
 }
 
-
 void DrawEnemies(){
 
   for (int i = 0; i < k_current_enemies; ++i){
@@ -1072,7 +1052,6 @@ void DrawEnemies(){
   }
 }
 
-
 void DrawShip(){
 
   if (ex_level == 0 || ex_level%4 == 0){
@@ -1085,7 +1064,6 @@ void DrawShip(){
   }else esat::DrawSprite(rocket[0].sprite, rocket[0].colbox.x1, rocket[0].colbox.y1);
 
 }
-
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
@@ -1117,7 +1095,8 @@ void FreeSprites(){
     //esat::SpriteRelease(enemys[i].sprite);
       free(enemys[i].sprite);
   }
-
+	free(platforms);
+	free(shots);
   free(enemys);
   free(player -> sprite);
 	free(player);
@@ -1304,7 +1283,6 @@ int esat::main(int argc, char **argv) {
 
 		if(time_%250==0){
 			ItemSpawn();
-			printf("hola!");
 		}
 		++time_;
 		UpdateFrame();
