@@ -315,12 +315,12 @@ void SpriteShipLevel(){
   if (ex_level < 4){
     //NAVE 1
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,3,854,50,183); //Blanco
-    ship[1] = esat::SubSprite(spsheet,51,854,50,183);//Pintado 1
-    ship[2] = esat::SubSprite(spsheet,101,854,50,183);//Pintado 2
-    ship[3] = esat::SubSprite(spsheet,152,854,50,183);//Pintado 3
-    ship[4] = esat::SubSprite(spsheet,203,854,50,183);//Pintado 4
-    ship[5] = esat::SubSprite(spsheet,254,854,50,183);//Morado
+    ship[0] = esat::SubSprite(spsheet,4,893,50,143); //Blanco
+    ship[1] = esat::SubSprite(spsheet,52,893,50,143);//Pintado 1
+    ship[2] = esat::SubSprite(spsheet,103,893,50,143);//Pintado 2
+    ship[3] = esat::SubSprite(spsheet,152,893,50,143);//Pintado 3
+    ship[4] = esat::SubSprite(spsheet,203,893,50,143);//Pintado 4
+    ship[5] = esat::SubSprite(spsheet,254,893,50,143);//Morado
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,239,556,50,50);//Pieza Base
@@ -332,12 +332,12 @@ void SpriteShipLevel(){
   }else if (ex_level < 8){
     //NAVE 2
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,308,853,50,183);
-    ship[1] = esat::SubSprite(spsheet,362,853,50,183);
-    ship[2] = esat::SubSprite(spsheet,414,853,50,183);
-    ship[3] = esat::SubSprite(spsheet,466,853,50,183);
-    ship[4] = esat::SubSprite(spsheet,518,853,50,183);
-    ship[5] = esat::SubSprite(spsheet,572,853,50,183);
+    ship[0] = esat::SubSprite(spsheet,308,893,50,143);
+    ship[1] = esat::SubSprite(spsheet,362,893,50,143);
+    ship[2] = esat::SubSprite(spsheet,414,893,50,143);
+    ship[3] = esat::SubSprite(spsheet,466,893,50,143);
+    ship[4] = esat::SubSprite(spsheet,518,893,50,143);
+    ship[5] = esat::SubSprite(spsheet,572,893,50,143);
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,336,554,50,50);//Pieza Base
@@ -348,12 +348,12 @@ void SpriteShipLevel(){
   }else if (ex_level < 12){
     //NAVE 3
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,624,851,50,186);
-    ship[1] = esat::SubSprite(spsheet,676,851,50,186);
-    ship[2] = esat::SubSprite(spsheet,730,851,50,186);
-    ship[3] = esat::SubSprite(spsheet,782,851,50,186);
-    ship[4] = esat::SubSprite(spsheet,834,851,50,186);
-    ship[5] = esat::SubSprite(spsheet,888,851,50,186);
+    ship[0] = esat::SubSprite(spsheet,623,893,50,146);
+    ship[1] = esat::SubSprite(spsheet,676,893,50,146);
+    ship[2] = esat::SubSprite(spsheet,730,893,50,146);
+    ship[3] = esat::SubSprite(spsheet,782,893,50,146);
+    ship[4] = esat::SubSprite(spsheet,834,893,50,146);
+    ship[5] = esat::SubSprite(spsheet,888,893,50,146);
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,460,558,50,50);//Pieza Base
@@ -364,12 +364,12 @@ void SpriteShipLevel(){
   }else {
     //NAVE 4
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,942,853,50,183);
-    ship[1] = esat::SubSprite(spsheet,996,853,50,183);
-    ship[2] = esat::SubSprite(spsheet,1050,853,50,183);
-    ship[3] = esat::SubSprite(spsheet,1104,853,50,183);
-    ship[4] = esat::SubSprite(spsheet,1056,660,50,183);
-    ship[5] = esat::SubSprite(spsheet,1108,660,50,183);
+    ship[0] = esat::SubSprite(spsheet,942,893,50,143);
+    ship[1] = esat::SubSprite(spsheet,996,893,50,143);
+    ship[2] = esat::SubSprite(spsheet,1050,893,50,143);
+    ship[3] = esat::SubSprite(spsheet,1104,893,50,143);
+    ship[4] = esat::SubSprite(spsheet,1056,701,50,143);
+    ship[5] = esat::SubSprite(spsheet,1108,701,50,143);
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,587,555,50,50);//Pieza Base
@@ -554,7 +554,7 @@ void AddPiece(nave *spaceship){
 
     }else {
       rocket[0].fuel = 0;
-      rocket[0].colbox.y1 -= 83;
+      rocket[0].colbox.y1 -= 43;
       rocket[0].sprite = ship[rocket[0].fuel];
 
   }
