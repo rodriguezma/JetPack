@@ -1094,6 +1094,7 @@ void UpdateFrame(){
   } else esat::DrawSprite(explode[player -> explodeanim], player -> x, player -> y);
   DrawEnemies();
 	DrawShoots();
+	DrawItems();
   DrawShip();
 	DrawCol((*player).colbox);
 	DrawCol(platforms[0].colbox);
