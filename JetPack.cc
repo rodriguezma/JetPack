@@ -566,6 +566,16 @@ void Pieces(nave *piece1, nave *piece2){
 
 }
 
+////////////////////////////////////////////////////////////////
+void FuelRecharge(objetos *fuel, nave *spaceship){
+	
+	if (Col(fuel -> colbox, spaceship -> colbox) && spaceship -> piece == 3){
+		++spaceship -> fuel;
+		spaceship -> sprite = ship[spaceship -> fuel];	
+	}
+}
+///////////////////////////////////////////////////////////////////
+
 void Enemies0 (enemigos *marcianitos){
 
       switch (marcianitos -> color){
