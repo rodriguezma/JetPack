@@ -413,7 +413,6 @@ void PlayerInit(){
   player -> vx = 6;
   player -> vy = 4;
   player -> colbox = {500,545,642,715};
-<<<<<<< HEAD
 
   if(multiplayer){
     (player+1) -> x = 500;
@@ -428,23 +427,6 @@ void PlayerInit(){
     (player+1) -> colbox = {500,545,642,715};
   }
   
-}
-=======
->>>>>>> e8245ac6daf15840da91e1eef32594cbdb460cbf
-
-  if(multiplayer){
-    (player+1) -> x = 500;
-    (player+1) -> y = 642;
-    (player+1) -> direction = 0;
-    (player+1) -> gravity = false;
-    (player+1) -> animation = 0;
-    (player+1) -> dead = false;
-    (player+1) -> explodeanim = 0;
-    (player+1) -> vx = 6;
-    (player+1) -> vy = 4;
-    (player+1) -> colbox = {500,545,642,715};
-  }
-
 }
 
 void Initiate(){
