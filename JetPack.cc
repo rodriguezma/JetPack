@@ -426,7 +426,7 @@ void PlayerInit(){
     (player+1) -> vy = 4;
     (player+1) -> colbox = {500,545,642,715};
   }
-  
+
 }
 
 void Initiate(){
@@ -568,11 +568,10 @@ void Pieces(nave *piece1, nave *piece2){
 
 ////////////////////////////////////////////////////////////////
 void FuelRecharge(objetos *fuel, nave *spaceship){
-	
+
 	if (Col(fuel -> colbox, spaceship -> colbox) && spaceship -> piece == 3){
 		++spaceship -> fuel;
 		spaceship -> sprite = ship[spaceship -> fuel];
-		fuel -> active = 0;		
 	}
 }
 ///////////////////////////////////////////////////////////////////
@@ -885,54 +884,49 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 
 void ItemSpawn(){
 	int Rand_;
-	if(objects[0].active==0 && rocket[0].piece == 2){Rand_ = 1;}else{Rand_ = rand()%6 + 1;}
+	Rand_ = rand()%15 + 1;
+	if(objects[0].active==0){Rand_ = 1;}
 	switch(Rand_){
-		case 1:
+		case 1,2,3,4,5:
 			objects[0].x = rand()%957;
 			objects[0].y = 51;
 			objects[0].active=1;
 			objects[0].pickup=0;
-			objects[0].drop = 0;
 			objects[0].colbox={objects[0].x, objects[0].x + 52, objects[0].y, objects[0].y + 36};
 			break;//fuel
-		case 2:
+		case 6,7:
 			objects[1].x = rand()%957;
 			objects[1].y = 51;
 			objects[1].active=1;
 			objects[1].pickup=0;
-			objects[1].drop = 0;
 			objects[1].colbox={objects[1].x, objects[1].x + 44, objects[1].y, objects[1].y + 44};
 			break;//diamond
-		case 3:
+		case 8,9:
 			objects[2].x = rand()%957;
 			objects[2].y = 51;
 			objects[2].active=1;
 			objects[2].pickup=0;
-			objects[2].drop = 0;
 			objects[2].colbox={objects[2].x, objects[2].x + 52, objects[2].y, objects[2].y + 32};
 			break;//emerald
-		case 4:
+		case 10,11:
 			objects[3].x = rand()%957;
 			objects[3].y = 51;
 			objects[3].active=1;
 			objects[3].pickup=0;
-			objects[3].drop = 0;
 			objects[3].colbox={objects[3].x, objects[3].x + 52, objects[3].y, objects[3].y + 28};
 			break;//gold
-		case 5:
+		case 12,13:
 			objects[4].x = rand()%957;
 			objects[4].y = 51;
 			objects[4].active=1;
 			objects[4].pickup=0;
-			objects[4].drop = 0;
 			objects[4].colbox={objects[4].x, objects[4].x + 52, objects[4].y, objects[4].y + 44};
 			break;//atomic
-		case 6:
+		case 14,15:
 			objects[5].x = rand()%957;
 			objects[5].y = 51;
 			objects[5].active=1;
 			objects[5].pickup=0;
-			objects[5].drop = 0;
 			objects[5].colbox={objects[5].x, objects[5].x + 52, objects[5].y, objects[5].y + 40};
 			break;//radioactive
 	}
@@ -944,13 +938,13 @@ void DrawItems(){
 		if(objects[i].active==1){//If active, draw object
 			esat::DrawSprite(objects[i].sprite, objects[i].x, objects[i].y);
 			DrawCol(objects[i].colbox);
-			
+
 			if((!ColPlatforms(objects[i].colbox) && objects[i].pickup == 0)||(objects[i].drop == 1)){
 				objects[i].y += 5;
 				objects[i].colbox.y1 += 5;
-				objects[i].colbox.y2 += 5;			
+				objects[i].colbox.y2 += 5;
 			}
-			
+
 			if(Col(objects[i].colbox,player -> colbox) && objects[i].pickup == 0){
 				if(i==0){
 					objects[i].pickup = 1;
@@ -960,7 +954,7 @@ void DrawItems(){
 					player -> points += objects[i].points;
 				}
 			}
-			
+
 			if(objects[i].pickup == 1 && objects[i].drop == 0){
 				objects[i].x = player -> x;
 				objects[i].y = player -> y;
@@ -968,18 +962,15 @@ void DrawItems(){
 				objects[i].colbox.x2 = player -> colbox.x2;
 				objects[i].colbox.y1 = player -> colbox.y1;
 				objects[i].colbox.y2 = player -> colbox.y2;
-				
-				if (objects[i].active == 1 && (objects[i].colbox.x1 == rocket[i].colbox.x1 || player -> dead) ){
+
+				if (objects[i].colbox.x1 == rocket[i].colbox.x1 || player -> dead ){
 					objects[i].pickup = 0;
 					objects[i].drop = 1;
 					objects[i].colbox={objects[i].x, objects[i].x + 52, objects[i].y, objects[i].y + 36};
 				}
 			}
-			
-			
 		}
 	}
-
 }
 
 void EnemiesSpawn(){
@@ -1097,13 +1088,13 @@ void DrawShip(){
 
 }
 
+
 void GameOver(spaceman *Player){
-	
+
 	if (Player -> lives <= 0 && !Player -> dead)
 		game_start = false;
-	
-	
 }
+
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
