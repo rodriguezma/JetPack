@@ -12,10 +12,13 @@ esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
 esat::SpriteHandle *ship, *shipieces;
 
-int level=0; // Nivel Enemigo (0-7)
-int ex_level=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
+int level_1=0; // Nivel Enemigo (0-7)
+int level_2=0; // Nivel Enemigo (0-7) Para player2
+int ex_level_1=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
+int ex_level_2=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas Para player 2
 int time_=0;
 int op=1;
+int turn=0; //Decide quien juega
 int current_shots=0;
 bool multiplayer=false, game_start=false;
 
@@ -78,7 +81,7 @@ struct objetos{
   float x,y=0;
   cuadrado colbox;
   int points;
-  char pickup,active=0,drop=0;
+  char pickup,active=0;
   esat::SpriteHandle sprite;
 };
 struct objetos *objects;
@@ -98,8 +101,15 @@ void CutInitialSprites(){
   // MAIN CHARACTER SPRITES
 	playerwalk = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
 	playerfly = (esat::SpriteHandle*) calloc (8,sizeof(esat::SpriteHandle));
-  player=(struct spaceman*)malloc(1*sizeof(struct spaceman));
+  if(!multiplayer){
+    player=(struct spaceman*)malloc(1*sizeof(struct spaceman));
+  }else{
+    player=(struct spaceman*)malloc(2*sizeof(struct spaceman));
+    (player+1)->sprite=(esat::SpriteHandle*)malloc(4*sizeof(esat::SpriteHandle));
+  }
   player->sprite=(esat::SpriteHandle*)malloc(4*sizeof(esat::SpriteHandle));
+  
+  
 
 
   enemys = (struct enemigos*) malloc (k_current_enemies*sizeof(struct enemigos));
@@ -147,7 +157,7 @@ void CutInitialSprites(){
 }
 
 // Utililzada al principio de cada nivel para cargar sprites enemigos
-void SelectEnemiesLevel(){
+void SelectEnemiesLevel(int level){
 
   switch (level){
 
@@ -295,7 +305,7 @@ void SelectEnemiesLevel(){
 }
 
 // Utilizada al principio de cada nivel para reservar la memoria necesaria
-void SpriteEnemyReserve(){
+void SpriteEnemyReserve(int level){
 
   if (level == 4 || level == 5 || level == 7){
     for (int i = 0; i < k_current_enemies; ++i){
@@ -310,17 +320,17 @@ void SpriteEnemyReserve(){
   }
 }
 
-void SpriteShipLevel(){
+void SpriteShipLevel(int level){
 
-  if (ex_level < 4){
+  if (level < 4){
     //NAVE 1
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,4,893,50,143); //Blanco
-    ship[1] = esat::SubSprite(spsheet,52,893,50,143);//Pintado 1
-    ship[2] = esat::SubSprite(spsheet,103,893,50,143);//Pintado 2
-    ship[3] = esat::SubSprite(spsheet,152,893,50,143);//Pintado 3
-    ship[4] = esat::SubSprite(spsheet,203,893,50,143);//Pintado 4
-    ship[5] = esat::SubSprite(spsheet,254,893,50,143);//Morado
+    ship[0] = esat::SubSprite(spsheet,3,854,50,183); //Blanco
+    ship[1] = esat::SubSprite(spsheet,51,854,50,183);//Pintado 1
+    ship[2] = esat::SubSprite(spsheet,101,854,50,183);//Pintado 2
+    ship[3] = esat::SubSprite(spsheet,152,854,50,183);//Pintado 3
+    ship[4] = esat::SubSprite(spsheet,203,854,50,183);//Pintado 4
+    ship[5] = esat::SubSprite(spsheet,254,854,50,183);//Morado
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,239,556,50,50);//Pieza Base
@@ -329,15 +339,15 @@ void SpriteShipLevel(){
     shipieces[3] = esat::SubSprite(spsheet,238,420,50,50);//Pieza Cabeza
 
 
-  }else if (ex_level < 8){
+  }else if (level < 8){
     //NAVE 2
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,308,893,50,143);
-    ship[1] = esat::SubSprite(spsheet,362,893,50,143);
-    ship[2] = esat::SubSprite(spsheet,414,893,50,143);
-    ship[3] = esat::SubSprite(spsheet,466,893,50,143);
-    ship[4] = esat::SubSprite(spsheet,518,893,50,143);
-    ship[5] = esat::SubSprite(spsheet,572,893,50,143);
+    ship[0] = esat::SubSprite(spsheet,308,853,50,183);
+    ship[1] = esat::SubSprite(spsheet,362,853,50,183);
+    ship[2] = esat::SubSprite(spsheet,414,853,50,183);
+    ship[3] = esat::SubSprite(spsheet,466,853,50,183);
+    ship[4] = esat::SubSprite(spsheet,518,853,50,183);
+    ship[5] = esat::SubSprite(spsheet,572,853,50,183);
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,336,554,50,50);//Pieza Base
@@ -345,15 +355,15 @@ void SpriteShipLevel(){
     shipieces[2] = esat::SubSprite(spsheet,336,488,50,50);//Pieza Mitad
     shipieces[3] = esat::SubSprite(spsheet,333,420,50,50);//Pieza Cabeza
 
-  }else if (ex_level < 12){
+  }else if (level < 12){
     //NAVE 3
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,623,893,50,146);
-    ship[1] = esat::SubSprite(spsheet,676,893,50,146);
-    ship[2] = esat::SubSprite(spsheet,730,893,50,146);
-    ship[3] = esat::SubSprite(spsheet,782,893,50,146);
-    ship[4] = esat::SubSprite(spsheet,834,893,50,146);
-    ship[5] = esat::SubSprite(spsheet,888,893,50,146);
+    ship[0] = esat::SubSprite(spsheet,624,851,50,186);
+    ship[1] = esat::SubSprite(spsheet,676,851,50,186);
+    ship[2] = esat::SubSprite(spsheet,730,851,50,186);
+    ship[3] = esat::SubSprite(spsheet,782,851,50,186);
+    ship[4] = esat::SubSprite(spsheet,834,851,50,186);
+    ship[5] = esat::SubSprite(spsheet,888,851,50,186);
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,460,558,50,50);//Pieza Base
@@ -364,12 +374,12 @@ void SpriteShipLevel(){
   }else {
     //NAVE 4
     ship = (esat::SpriteHandle*) realloc (ship,6*sizeof(esat::SpriteHandle));
-    ship[0] = esat::SubSprite(spsheet,942,893,50,143);
-    ship[1] = esat::SubSprite(spsheet,996,893,50,143);
-    ship[2] = esat::SubSprite(spsheet,1050,893,50,143);
-    ship[3] = esat::SubSprite(spsheet,1104,893,50,143);
-    ship[4] = esat::SubSprite(spsheet,1056,701,50,143);
-    ship[5] = esat::SubSprite(spsheet,1108,701,50,143);
+    ship[0] = esat::SubSprite(spsheet,942,853,50,183);
+    ship[1] = esat::SubSprite(spsheet,996,853,50,183);
+    ship[2] = esat::SubSprite(spsheet,1050,853,50,183);
+    ship[3] = esat::SubSprite(spsheet,1104,853,50,183);
+    ship[4] = esat::SubSprite(spsheet,1056,660,50,183);
+    ship[5] = esat::SubSprite(spsheet,1108,660,50,183);
 
     shipieces = (esat::SpriteHandle*) realloc (shipieces,4*sizeof(esat::SpriteHandle));
     shipieces[0] = esat::SubSprite(spsheet,587,555,50,50);//Pieza Base
@@ -380,9 +390,9 @@ void SpriteShipLevel(){
   }
 }
 
-void InitShip(){
+void InitShip(int level){
 
-  if (ex_level == 0 || ex_level%4 == 0){
+  if (level == 0 || level%4 == 0){
     rocket = (struct nave*) realloc (rocket, 3*sizeof(struct nave));
     rocket[0].sprite = shipieces[0];
     rocket[0].colbox = {662,710,670,720};
@@ -426,7 +436,7 @@ void PlayerInit(){
     (player+1) -> vy = 4;
     (player+1) -> colbox = {500,545,642,715};
   }
-  
+
 }
 
 void Initiate(){
@@ -434,6 +444,8 @@ void Initiate(){
   PlayerInit();
   player -> lives = 3;
   player -> points = 0;
+  (player+1) -> lives = 3;
+  (player+1) -> points = 0;
 
   //PLATAFORMAS
   platforms=(struct terreno*)malloc(5*sizeof(struct terreno));
@@ -452,7 +464,11 @@ void Initiate(){
   objects[5].points=250;
 
   //ENEMIGOS
-  SelectEnemiesLevel();
+  if(turn%2==0){
+    SelectEnemiesLevel(level_1);
+  }else{
+    SelectEnemiesLevel(level_2);
+  }
   for (int i = 0; i < k_current_enemies; ++i){
     enemys[i].color = rand()%4;
     enemys[i]. animation = 0;
@@ -461,7 +477,11 @@ void Initiate(){
   }
 
   //NAVE
-  InitShip();
+  if(turn%2==0){
+    InitShip(ex_level_1);
+  }else{
+    InitShip(ex_level_2);
+  }
 }
 
 void DrawCol(cuadrado colbox){
@@ -536,7 +556,7 @@ void AddPiece(nave *spaceship){
 
     }else {
       rocket[0].fuel = 0;
-      rocket[0].colbox.y1 -= 43;
+      rocket[0].colbox.y1 -= 83;
       rocket[0].sprite = ship[rocket[0].fuel];
 
   }
@@ -565,16 +585,6 @@ void Pieces(nave *piece1, nave *piece2){
   }
 
 }
-
-////////////////////////////////////////////////////////////////
-void FuelRecharge(objetos *fuel, nave *spaceship){
-	
-	if (Col(fuel -> colbox, spaceship -> colbox) && spaceship -> piece == 3){
-		++spaceship -> fuel;
-		spaceship -> sprite = ship[spaceship -> fuel];	
-	}
-}
-///////////////////////////////////////////////////////////////////
 
 void Enemies0 (enemigos *marcianitos){
 
@@ -687,7 +697,7 @@ void Enemies12_36 (enemigos *marcianitos){
   }
 }
 
-void EnemySprite (enemigos *Tmarcianos){
+void EnemySprite (enemigos *Tmarcianos, int level){
 
   if (level == 0){
     Enemies0(Tmarcianos);
@@ -869,7 +879,12 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
     if (Col(character->colbox, enemys[i].colbox) && !character->dead && !enemys[i].dead){
       character -> dead = true;
       character -> explodeanim = 0;
-      --character -> lives;
+      if(multiplayer && turn%2==1){
+        --(character+1) -> lives;
+      }else{
+        --character -> lives;
+      }
+      turn++;
     }
   }
 
@@ -885,7 +900,6 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 void ItemSpawn(){
 	int Rand_;
 	Rand_ = rand()%15 + 1;
-	if(objects[0].active==0){Rand_ = 1;}
 	switch(Rand_){
 		case 1,2,3,4,5:
 			objects[0].x = rand()%957;
@@ -936,47 +950,32 @@ void DrawItems(){
 
 	for(int i = 0;i < 6;++i){
 		if(objects[i].active==1){//If active, draw object
+
 			esat::DrawSprite(objects[i].sprite, objects[i].x, objects[i].y);
+			if(!ColPlatforms(objects[i].colbox)&&objects[i].pickup!=1){//No colision = go down
+			objects[i].y += 5;
+			objects[i].colbox.y1 += 5;
+			objects[i].colbox.y2 += 5;
+			}else if(objects[0].pickup == 1){//Pickup fuel
+			objects[0].x = player -> x;
+			objects[0].y = player -> y;
+			objects[0].colbox.x1 = player -> colbox.x1;
+			objects[0].colbox.x2 = player -> colbox.x2;
+			objects[0].colbox.y1 = player -> colbox.y1;
+			objects[0].colbox.y2 = player -> colbox.y2;
+			}
+			if(Col(objects[i].colbox, player -> colbox)){//Pickup other items
+				objects[i].pickup = 1;
+				player -> points+=objects[i].points;
+				if(i!=0){objects[i].active = 0;}
+			}
 			DrawCol(objects[i].colbox);
-			
-			if((!ColPlatforms(objects[i].colbox) && objects[i].pickup == 0)||(objects[i].drop == 1)){
-				objects[i].y += 5;
-				objects[i].colbox.y1 += 5;
-				objects[i].colbox.y2 += 5;				
-			}
-			
-			if(Col(objects[i].colbox,player -> colbox) && objects[i].pickup == 0){
-				if(i==0){
-					objects[i].pickup = 1;
-					player -> points += objects[i].points;
-				}else{
-					objects[i].active = 0;
-					player -> points += objects[i].points;
-				}
-			}
-			
-			if(objects[i].pickup == 1 && objects[i].drop == 0){
-				objects[i].x = player -> x;
-				objects[i].y = player -> y;
-				objects[i].colbox.x1 = player -> colbox.x1;
-				objects[i].colbox.x2 = player -> colbox.x2;
-				objects[i].colbox.y1 = player -> colbox.y1;
-				objects[i].colbox.y2 = player -> colbox.y2;
-				
-				if (objects[i].colbox.x1 == rocket[i].colbox.x1 || player -> dead ){
-					objects[i].pickup = 0;
-					objects[i].drop = 1;
-					objects[i].colbox={objects[i].x, objects[i].x + 52, objects[i].y, objects[i].y + 36};
-				}
-			}
-			
-			
 		}
 	}
 
 }
 
-void EnemiesSpawn(){
+void EnemiesSpawn(int level){
 	float time = esat::Time();
 	srand(time);
 	for(int i =0;i<k_current_enemies;i++){
@@ -984,19 +983,34 @@ void EnemiesSpawn(){
 			enemys[i].alive = true;
 			if(rand()%2==0){
 				enemys[i].colbox = {0,50,0,0};
-				enemys[i].colbox.y1 = (float)(100 + rand()%550);
-				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
 				enemys[i].vx = rand()%2 + 3;
-				enemys[i].vy = rand()%5 - 2;
 				enemys[i].direction = 1;
 			}else{
 				enemys[i].colbox = {949,999,0,0};
-				enemys[i].colbox.y1 = (float)(100 + rand()%550);
-				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
 				enemys[i].vx = - (rand()%2 + 3);
-				enemys[i].vy = rand()%5 - 2;
 				enemys[i].direction = 0;
 			}
+      enemys[i].colbox.y1 = (float)(100 + rand()%550);
+      enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
+      enemys[i].vy = rand()%5 - 2;
+      switch(level){
+        case 0:
+          enemys[i].points=25;break;
+        case 1:
+          enemys[i].points=80;break;
+        case 2:
+          enemys[i].points=40;break;
+        case 3:
+          enemys[i].points=55;break;
+        case 4:
+          enemys[i].points=50;break;
+        case 5:
+          enemys[i].points=60;break;
+        case 6:
+          enemys[i].points=25;break;
+        case 7:
+          enemys[i].points=50;break;
+      }
 		}
 	}
 }
@@ -1050,6 +1064,11 @@ void EnemiesDead(){
       if (Col(enemys[i].colbox,shots[k].colbox) && !enemys[i].dead){
         enemys[i].dead = true;
         enemys[i].explodeanim = 0;
+        if(multiplayer && turn%2==1){
+          (player+1)->points+=enemys[i].points;
+        }else{
+          player->points+=enemys[i].points;
+        }
 
       }else if (enemys[i].dead && enemys[i].explodeanim > 2){
          enemys[i].color = rand()%4;
@@ -1061,11 +1080,16 @@ void EnemiesDead(){
   }
 }
 
-void DrawEnemies(){
+void DrawEnemies(int level){
 
   for (int i = 0; i < k_current_enemies; ++i){
     if (!enemys[i].dead){
-      EnemySprite(enemys+i);
+      if(turn%2==0){
+        EnemySprite(enemys+i,level_1);
+      }else{
+        EnemySprite(enemys+i,level_2);
+      }
+      
       esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
       if (time_ % 5 ==0 && level < 3){
         ++enemys[i].animation %= 2;
@@ -1078,9 +1102,9 @@ void DrawEnemies(){
   }
 }
 
-void DrawShip(){
+void DrawShip(int level){
 
-  if (ex_level == 0 || ex_level%4 == 0){
+  if (level == 0 || level%4 == 0){
     for (int i=0; i<3; ++i){
       if (rocket[i].piece != 5)
       esat::DrawSprite(rocket[i].sprite, rocket[i].colbox.x1, rocket[i].colbox.y1);
@@ -1091,25 +1115,20 @@ void DrawShip(){
 
 }
 
-
-void GameOver(spaceman *Player){
-	
-	if (Player -> lives <= 0 && !Player -> dead)
-		game_start = false;
-	
-	
-}
-
-
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
   if (!player -> dead){
 	   esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
   } else esat::DrawSprite(explode[player -> explodeanim], player -> x, player -> y);
-  DrawEnemies();
+  if(turn%2==0){
+    DrawEnemies(level_1);
+    DrawShip(ex_level_1);
+  }else{
+    DrawEnemies(level_2);
+    DrawShip(ex_level_2);
+  }
 	DrawShoots();
 	DrawItems();
-  DrawShip();
 	DrawCol((*player).colbox);
 	DrawCol(platforms[0].colbox);
 	DrawCol(platforms[1].colbox);
@@ -1184,7 +1203,6 @@ void Menu(){
     op=2;
   }if(esat::IsSpecialKeyDown(esat::kSpecialKey_Keypad_5) || esat::IsKeyDown('5')){
     game_start=true;
-		Initiate();
     if(op==2){
       multiplayer=true;
     }
@@ -1283,26 +1301,37 @@ int esat::main(int argc, char **argv) {
   esat::DrawSetTextFont("Recursos/fonts/Pixelopolis 9000.ttf");
 
 	CutInitialSprites();
-  SpriteShipLevel();
+  if(turn%2==0){
+    SpriteShipLevel(ex_level_1);
+    SpriteEnemyReserve(level_1);
+  }else{
+    SpriteShipLevel(ex_level_2);
+    SpriteEnemyReserve(level_2);
+  }
 	Initiate();
-  SpriteEnemyReserve();
-
-
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
 
   if(!game_start){
     Menu();
+    if (multiplayer){
+      printf("MULTI\n");
+    }
   }
 
 
 	esat::DrawBegin();
-    esat::DrawClear(0,0,0);
+  esat::DrawClear(0,0,0);
 
 	if(game_start){
     EnemiesDead();
-		EnemiesSpawn();
+    if(turn%2==0){
+      EnemiesSpawn(level_1);
+    }else{
+      EnemiesSpawn(level_2);
+    }
+		
 		PlayerSprites(player);
     if (!player -> dead){
   		Player1Control(player,esat::kSpecialKey_Left,esat::kSpecialKey_Right);
@@ -1312,8 +1341,13 @@ int esat::main(int argc, char **argv) {
     	Shot(esat::kSpecialKey_Space);
     	ShotsMovement();
 
-      if (ex_level == 0 || ex_level%4 ==0)
-        Pieces(&rocket[1],&rocket[2]);
+      if(turn%2==0){
+        if (ex_level_1 == 0 || ex_level_1%4 ==0)
+          Pieces(&rocket[1],&rocket[2]);
+      }else{
+        if (ex_level_2 == 0 || ex_level_2%4 ==0)
+          Pieces(&rocket[1],&rocket[2]);
+      }
 
     	EnemiesMovement();
     	EnemiesLimits();
@@ -1323,12 +1357,10 @@ int esat::main(int argc, char **argv) {
 		}
 		++time_;
 		UpdateFrame();
-		GameOver(player);
     Interface(player);
 	}
 
     esat::DrawEnd();
-
 	do{
     current_time = esat::Time();
     }while((current_time-last_time)<=1000.0/fps);
@@ -1336,7 +1368,6 @@ int esat::main(int argc, char **argv) {
   }
 
 	FreeSprites();
-
   esat::WindowDestroy();
   return 0;
 }
