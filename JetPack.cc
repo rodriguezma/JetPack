@@ -78,7 +78,7 @@ struct objetos{
   float x,y=0;
   cuadrado colbox;
   int points;
-  char pickup,active=0;
+  char pickup,active=0,drop=0;
   esat::SpriteHandle sprite;
 };
 struct objetos *objects;
@@ -885,6 +885,7 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 void ItemSpawn(){
 	int Rand_;
 	Rand_ = rand()%15 + 1;
+	if(objects[0].active==0){Rand_ = 1;}
 	switch(Rand_){
 		case 1,2,3,4,5:
 			objects[0].x = rand()%957;
