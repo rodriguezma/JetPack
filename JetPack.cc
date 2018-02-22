@@ -935,26 +935,41 @@ void DrawItems(){
 
 	for(int i = 0;i < 6;++i){
 		if(objects[i].active==1){//If active, draw object
-
 			esat::DrawSprite(objects[i].sprite, objects[i].x, objects[i].y);
-			if(!ColPlatforms(objects[i].colbox)&&objects[i].pickup!=1){//No colision = go down
-			objects[i].y += 5;
-			objects[i].colbox.y1 += 5;
-			objects[i].colbox.y2 += 5;
-			}else if(objects[0].pickup == 1){//Pickup fuel
-			objects[0].x = player -> x;
-			objects[0].y = player -> y;
-			objects[0].colbox.x1 = player -> colbox.x1;
-			objects[0].colbox.x2 = player -> colbox.x2;
-			objects[0].colbox.y1 = player -> colbox.y1;
-			objects[0].colbox.y2 = player -> colbox.y2;
-			}
-			if(Col(objects[i].colbox, player -> colbox)){//Pickup other items
-				objects[i].pickup = 1;
-				player -> points+=objects[i].points;
-				if(i!=0){objects[i].active = 0;}
-			}
 			DrawCol(objects[i].colbox);
+			
+			if((!ColPlatforms(objects[i].colbox) && objects[i].pickup == 0)||(objects[i].drop == 1)){
+				objects[i].y += 5;
+				objects[i].colbox.y1 += 5;
+				objects[i].colbox.y2 += 5;				
+			}
+			
+			if(Col(objects[i].colbox,player -> colbox) && objects[i].pickup == 0){
+				if(i==0){
+					objects[i].pickup = 1;
+					player -> points += objects[i].points;
+				}else{
+					objects[i].active = 0;
+					player -> points += objects[i].points;
+				}
+			}
+			
+			if(objects[i].pickup == 1 && objects[i].drop == 0){
+				objects[i].x = player -> x;
+				objects[i].y = player -> y;
+				objects[i].colbox.x1 = player -> colbox.x1;
+				objects[i].colbox.x2 = player -> colbox.x2;
+				objects[i].colbox.y1 = player -> colbox.y1;
+				objects[i].colbox.y2 = player -> colbox.y2;
+				
+				if (objects[i].colbox.x1 == rocket[i].colbox.x1 || player -> dead ){
+					objects[i].pickup = 0;
+					objects[i].drop = 1;
+					objects[i].colbox={objects[i].x, objects[i].x + 52, objects[i].y, objects[i].y + 36};
+				}
+			}
+			
+			
 		}
 	}
 
