@@ -569,11 +569,10 @@ void Pieces(nave *piece1, nave *piece2){
 ////////////////////////////////////////////////////////////////
 void FuelRecharge(objetos *fuel, nave *spaceship){
 
-	if (Col(fuel -> colbox, spaceship -> colbox) && spaceship -> piece >= 2 && fuel -> active == 1){
+	if (Col(fuel -> colbox, spaceship -> colbox) && spaceship -> piece == 3){
 		++spaceship -> fuel;
 		spaceship -> sprite = ship[spaceship -> fuel];
-		fuel -> active = 0;
-    fuel -> y = 0;
+		fuel -> active = 0;		
 	}
 }
 ///////////////////////////////////////////////////////////////////
