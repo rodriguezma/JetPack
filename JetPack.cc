@@ -992,7 +992,7 @@ void DrawItems(){
           }else{
             player -> points += objects[i].points;
           }
-					
+
 				}else{
 					objects[i].active = 0;
 					if(multiplayer && turn%2==1){
@@ -1171,10 +1171,21 @@ void GameOver(spaceman *Player){
 
 	if (Player -> lives <= 0 && !Player -> dead){
 		game_start = false;
-    SpriteShipLevel();
+    SpriteShipLevel(ex_level_1);
     Initiate();
   }
 }
+
+void NextLevel(){
+
+  if (nextlevel){
+
+    
+  }
+
+
+}
+
 
 void UpdateFrame(){
 	esat::DrawSprite(map,0,0);
