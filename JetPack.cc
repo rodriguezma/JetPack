@@ -917,7 +917,7 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 
 void ItemSpawn(){
 	int Rand_;
-	if(objects[0].active==0 && rocket[0].piece == 2){Rand_ = 1;}else{Rand_ = rand()%5 + 2;}
+	if(objects[0].active==0 && rocket[0].piece == 2 && rocket[0].fuel != 5){Rand_ = 1;}else{Rand_ = rand()%5 + 2;}
 	switch(Rand_){
 		case 1:
 			objects[0].x = rand()%957;
@@ -976,33 +976,33 @@ void DrawItems(){
 		if(objects[i].active==1){//If active, draw object
 			esat::DrawSprite(objects[i].sprite, objects[i].x, objects[i].y);
 			DrawCol(objects[i].colbox);
-
-			if((!ColPlatforms(objects[i].colbox) && objects[i].pickup == 0)||(objects[i].drop == 1)){
+			
+			if((!ColPlatforms(objects[i].colbox) && objects[i].pickup == 0)||(!ColPlatforms(objects[i].colbox) && objects[i].drop == 1)){
 				objects[i].y += 5;
 				objects[i].colbox.y1 += 5;
 				objects[i].colbox.y2 += 5;
 				FuelRecharge(&objects[0],&rocket[0]);
 			}
-
+			
 			if(Col(objects[i].colbox,player -> colbox) && objects[i].pickup == 0){
 				if(i==0){
 					objects[i].pickup = 1;
+<<<<<<< HEAD
           if(multiplayer && turn%2==1){
             (player+1) -> points += objects[i].points;
           }else{
             player -> points += objects[i].points;
           }
 
+=======
+					player -> points += objects[i].points;
+>>>>>>> 45ca8795cc20f695606ff301260cff7ce34de451
 				}else{
 					objects[i].active = 0;
-					if(multiplayer && turn%2==1){
-            (player+1) -> points += objects[i].points;
-          }else{
-            player -> points += objects[i].points;
-          }
+					player -> points += objects[i].points;
 				}
 			}
-
+			
 			if(objects[i].pickup == 1 && objects[i].drop == 0){
 				objects[i].x = player -> x;
 				objects[i].y = player -> y;
@@ -1010,15 +1010,17 @@ void DrawItems(){
 				objects[i].colbox.x2 = player -> colbox.x2;
 				objects[i].colbox.y1 = player -> colbox.y1;
 				objects[i].colbox.y2 = player -> colbox.y2;
-
+				
 				if (objects[i].active == 1 && (objects[i].colbox.x1 == rocket[i].colbox.x1 || player -> dead) ){
 					objects[i].pickup = 0;
+					if(objects[i].colbox.x1 == rocket[i].colbox.x1){
 					objects[i].drop = 1;
+					}
 					objects[i].colbox={objects[i].x, objects[i].x + 52, objects[i].y, objects[i].y + 36};
 				}
 			}
-
-
+			
+			
 		}
 	}
 
