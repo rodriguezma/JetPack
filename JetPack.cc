@@ -426,7 +426,7 @@ void PlayerInit(){
     (player+1) -> vy = 4;
     (player+1) -> colbox = {500,545,642,715};
   }
-  
+
 }
 
 void Initiate(){
@@ -450,6 +450,16 @@ void Initiate(){
   objects[3].points=250;
   objects[4].points=250;
   objects[5].points=250;
+
+  for(int i = 0; i<6; ++i){
+    objects[i].active = 0;
+    objects[i].x = 0;
+    objects[i].y = 0;
+    objects[i].pickup = 0;
+    objects[i].drop = 0;
+
+
+  }
 
   //ENEMIGOS
   SelectEnemiesLevel();
@@ -568,18 +578,18 @@ void Pieces(nave *piece1, nave *piece2){
 
 ////////////////////////////////////////////////////////////////
 void FuelRecharge(objetos *fuel, nave *spaceship){
-	
+
 	if (Col(fuel -> colbox, spaceship -> colbox) && spaceship -> piece == 2 && fuel -> active == 1){
 		++spaceship -> fuel;
 		spaceship -> sprite = ship[spaceship -> fuel];
-		fuel -> active = 0;		
+		fuel -> active = 0;
 		fuel -> y = 0;
 		fuel -> x = 51;
 		fuel -> pickup=0;
 		fuel -> drop = 0;
 	}
 }
-///////////////////////////////////////////////////////////////////
+
 
 void Enemies0 (enemigos *marcianitos){
 
@@ -948,14 +958,14 @@ void DrawItems(){
 		if(objects[i].active==1){//If active, draw object
 			esat::DrawSprite(objects[i].sprite, objects[i].x, objects[i].y);
 			DrawCol(objects[i].colbox);
-			
+
 			if((!ColPlatforms(objects[i].colbox) && objects[i].pickup == 0)||(objects[i].drop == 1)){
 				objects[i].y += 5;
 				objects[i].colbox.y1 += 5;
 				objects[i].colbox.y2 += 5;
 				FuelRecharge(&objects[0],&rocket[0]);
 			}
-			
+
 			if(Col(objects[i].colbox,player -> colbox) && objects[i].pickup == 0){
 				if(i==0){
 					objects[i].pickup = 1;
@@ -965,7 +975,7 @@ void DrawItems(){
 					player -> points += objects[i].points;
 				}
 			}
-			
+
 			if(objects[i].pickup == 1 && objects[i].drop == 0){
 				objects[i].x = player -> x;
 				objects[i].y = player -> y;
@@ -973,15 +983,15 @@ void DrawItems(){
 				objects[i].colbox.x2 = player -> colbox.x2;
 				objects[i].colbox.y1 = player -> colbox.y1;
 				objects[i].colbox.y2 = player -> colbox.y2;
-				
+
 				if (objects[i].active == 1 && (objects[i].colbox.x1 == rocket[i].colbox.x1 || player -> dead) ){
 					objects[i].pickup = 0;
 					objects[i].drop = 1;
 					objects[i].colbox={objects[i].x, objects[i].x + 52, objects[i].y, objects[i].y + 36};
 				}
 			}
-			
-			
+
+
 		}
 	}
 
@@ -1099,15 +1109,16 @@ void DrawShip(){
     }
 
   }else esat::DrawSprite(rocket[0].sprite, rocket[0].colbox.x1, rocket[0].colbox.y1);
-
 }
 
+
 void GameOver(spaceman *Player){
-	
-	if (Player -> lives <= 0 && !Player -> dead)
+
+	if (Player -> lives <= 0 && !Player -> dead){
 		game_start = false;
-	
-	
+    SpriteShipLevel();
+    Initiate();
+  }
 }
 
 void UpdateFrame(){
