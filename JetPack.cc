@@ -6,17 +6,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 esat::SpriteHandle map,spsheet,*explode;
 esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
 esat::SpriteHandle *ship=NULL, *shipieces=NULL, *turbo;
 
-int level_1=0; // Nivel Enemigo (0-7)
+int level_1=2; // Nivel Enemigo (0-7)
 int level_2=0; // Nivel Enemigo (0-7)
 int ex_level_1=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 int ex_level_2=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 bool nextlevel=false;
+int UfoTime=0;
 int time_=0;
 int op=1;
 int current_shots=0;
@@ -896,8 +898,12 @@ void Player1Control (spaceman *Player, esat::SpecialKey dir0, esat::SpecialKey d
 
 void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
 
-  for (int i = 0; i < k_current_enemies; ++i){
+  for (int i = 0; i < k_current_enemies; i++){
     if (Col(character->colbox, enemys[i].colbox) && !character->dead && !enemys[i].dead){
+      printf("colision con enemigo: %d\n",i);
+      printf("(%f,%f|%f,%f),(%f,%f|%f,%f)",character -> colbox.x1,character -> colbox.y1,character -> colbox.x2,character -> colbox.y2,enemys[i].colbox.x1,enemys[i].colbox.y1,enemys[i].colbox.x2,enemys[i].colbox.y2);
+      enemys[i].dead = true;
+      enemys[i].explodeanim = 0;
       character -> dead = true;
       character -> explodeanim = 0;
       if(multiplayer && turn%2==1){
@@ -910,8 +916,9 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
       }
     }
   }
-
+  printf("%d,%d,%d\n",character -> dead,character -> explodeanim , time_%10);
   if (character -> dead && character -> explodeanim >= 2 && time_%10 == 0){
+   
     PlayerInit();
 
   }else if (character -> dead && time_%10 == 0){
@@ -1030,27 +1037,164 @@ void DrawItems(){
 
 }
 
+void InitMeteorites(enemigos *marcianito){
+
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 49;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 32;
+  
+  marcianito -> vy = rand()%3 - 1;
+  
+  if(marcianito -> direction==1){
+    marcianito -> vx = 3;
+  }else{
+    marcianito -> vx = -3;
+  } 
+    
+}
+
+void InitBalls(enemigos *marcianito){
+
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 52;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 52;
+
+  if(rand()%2==0)
+    marcianito -> vx = 3;
+  else
+    marcianito -> vx = -3;
+
+  if(marcianito -> direction==1){
+    marcianito -> vx = 3;
+  }else{
+    marcianito -> vx = -3;
+  }
+  
+}
+
+void InitFurBalls(enemigos *marcianito){
+  
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 49;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 42;
+  
+  marcianito -> vy = rand()%7 - 3;
+  if(marcianito -> direction==1){
+    marcianito -> vx = 3;
+  }else{
+    marcianito -> vx = -3;
+  }
+
+}
+
+void InitDarts(enemigos *marcianito){
+  
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 52;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 28;
+
+  marcianito -> vy = 0;
+  marcianito -> vx = 0;
+  
+}
+
+void InitUfos(enemigos *marcianito){
+  
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 52;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 32;
+  
+  marcianito -> vy = rand()%7 - 3;
+  if(marcianito -> direction==1){
+    marcianito -> vx = 3;
+  }else{
+    marcianito -> vx = -3;
+  }
+  
+}
+
+void InitCrosses(enemigos *marcianito){
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 52;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 52;
+ 
+  if(rand()%2==0)
+    marcianito -> vx = 3;
+  else
+    marcianito -> vx = -3;
+ 
+  if(marcianito -> direction==1){
+    marcianito -> vx = 3;
+  }else{
+    marcianito -> vx = -3;
+  }
+}
+
+void InitSpaceShips(enemigos *marcianito){
+  
+  marcianito -> colbox.x2 = marcianito -> colbox.x2 + 51;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 41;
+
+  marcianito -> vy = rand()%3 - 1;
+  
+  if(marcianito -> direction==1){
+    marcianito -> vx = 3;
+  }else{
+    marcianito -> vx = -3;
+  }
+  
+}
+
+void InitBlobs(enemigos *marcianito){
+  
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 52;
+  marcianito -> colbox.y2 = marcianito -> colbox.y1 + 48;
+  
+  marcianito -> vy = 0;
+  marcianito -> vx = 0;
+  
+}
+
+void InitEnemies(enemigos *marcianito){
+  switch(level_1){
+    case 0:
+ 
+    InitMeteorites(marcianito);
+    break;
+    case 1:
+    InitFurBalls(marcianito);
+    break;
+    case 2:
+    InitBalls(marcianito);
+    break;
+    case 3:
+    InitDarts(marcianito);
+    break;
+    case 4:
+    InitUfos(marcianito);
+    break;
+    case 5:
+    InitCrosses(marcianito);
+    break;
+    case 6:
+    InitSpaceShips(marcianito);
+    break;
+    case 7:
+    InitBlobs(marcianito);
+    break;
+  }
+}
+
 void EnemiesSpawn(int level){
-	float time = esat::Time();
-	srand(time);
-	for(int i =0;i<k_current_enemies;i++){
-		if(!enemys[i].alive){
-			enemys[i].alive = true;
-			if(rand()%2==0){
-				enemys[i].colbox = {0,50,0,0};
-				enemys[i].colbox.y1 = (float)(100 + rand()%550);
-				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
-				enemys[i].vx = rand()%2 + 3;
-				enemys[i].vy = rand()%5 - 2;
-				enemys[i].direction = 1;
-			}else{
-				enemys[i].colbox = {949,999,0,0};
-				enemys[i].colbox.y1 = (float)(100 + rand()%550);
-				enemys[i].colbox.y2 = enemys[i].colbox.y1 + 50;
-				enemys[i].vx = - (rand()%2 + 3);
-				enemys[i].vy = rand()%5 - 2;
-				enemys[i].direction = 0;
-			}
+
+  for(int i =0;i<k_current_enemies;i++){
+    if(!enemys[i].alive){
+      enemys[i].alive = true;
+      enemys[i].colbox = {0,0,(float)(100 + rand()%550),0};
+      if(rand()%2==1){
+        enemys[i].colbox.x1 = 2;
+        enemys[i].direction = 1;
+      }else{
+        enemys[i].colbox.x1 = 945;
+        enemys[i].direction = 0;
+      }
+
+      InitEnemies(&enemys[i]);
+
       switch(level){
         case 0:
           enemys[i].points=25;break;
@@ -1069,92 +1213,261 @@ void EnemiesSpawn(int level){
         case 7:
           enemys[i].points=50;break;
       }
-		}
-	}
+    }
+  }
 }
 
+
+void BallsMovement(){
+  
+  for(int i=0;i<k_current_enemies;i++){
+    if (!enemys[i].dead){
+      cuadrado auxcolbox = enemys[i].colbox;
+      auxcolbox.x1 += enemys[i].vx;
+      auxcolbox.x2 += enemys[i].vx;
+      if(ColPlatforms(auxcolbox)){
+        enemys[i].vx = - enemys[i].vx;
+        if(enemys[i].direction == 0)
+          enemys[i].direction = 1;
+        else
+          enemys[i].direction = 0;
+      }
+      auxcolbox = enemys[i].colbox;
+      auxcolbox.y1 += enemys[i].vy;
+      auxcolbox.y2 += enemys[i].vy;
+      if(ColPlatforms(auxcolbox)){
+        enemys[i].vy = - enemys[i].vy;
+      }
+    }
+  }
+}
+
+void DartsMovement(){
+  for(int i=0;i<k_current_enemies;i++){
+    if((*player).colbox.y1 + 35 > enemys[i].colbox.y1 
+    && (*player).colbox.y1 + 35 < enemys[i].colbox.y2){
+      switch(enemys[i].direction){
+        case 0:
+        enemys[i].vx = -10;
+        break;
+        case 1:
+        enemys[i].vx = 10;
+        break;
+      }
+    }
+    if(ColPlatforms(enemys[i].colbox) && !enemys[i].dead){
+      enemys[i].dead = true;
+      enemys[i].explodeanim = 0;
+    }
+  }
+}
+
+void UfoMovement(){
+  double wx,wy,vx,vy,m;
+  wx = (*player).colbox.x1 + 25;
+  wy = (*player).colbox.y1 + 30;
+  
+  for(int i=0;i<k_current_enemies;i++){
+    if(!enemys[i].dead){
+      if(UfoTime<esat::Time()){
+        vx = enemys[i].colbox.x1 + 25;
+        vy = enemys[i].colbox.y1 + 25;
+        
+        vx = wx - vx;
+        vy = wy - vy;
+       
+        m=(vx*vx)+(vy*vy);
+        m=sqrt(m);
+
+        vx = vx / m;
+        vy = vy / m;
+
+        vx *= 4;
+        vy *= 4;
+
+        enemys[i].vx = vx;
+        enemys[i].vy = vy;
+        printf("%f,%f\n",vx,vy);
+      }
+
+      cuadrado auxcolbox = enemys[i].colbox;
+      auxcolbox.x1 += enemys[i].vx;
+      auxcolbox.x2 += enemys[i].vx;
+      if(ColPlatforms(auxcolbox)){
+        enemys[i].vx = - enemys[i].vx;
+        if(enemys[i].direction == 0)
+          enemys[i].direction = 1;
+        else
+          enemys[i].direction = 0;
+      }
+      auxcolbox = enemys[i].colbox;
+      auxcolbox.y1 += enemys[i].vy;
+      auxcolbox.y2 += enemys[i].vy;
+      if(ColPlatforms(auxcolbox))
+        enemys[i].vy = - enemys[i].vy;
+    
+  }
+}
+if(UfoTime<esat::Time())
+  UfoTime = esat::Time()+1000;
+}
+
+void MeteoritesMovement(){
+  for(int i=0;i<k_current_enemies;i++){
+    if (!enemys[i].dead && ColPlatforms( enemys[i].colbox)){
+      enemys[i].dead = true;
+      enemys[i].explodeanim = 0;
+    }
+  }
+}
+
+void RandMovement(){
+
+  for(int i=0;i<k_current_enemies;i++){
+    if(!enemys[i].dead){
+      if(UfoTime<esat::Time()){
+        switch(rand()%3){
+          case 0:
+            enemys[i].vy = 3;
+          break;
+          case 1:
+            enemys[i].vy = 0;
+          break;
+          case 2:
+            enemys[i].vy = -3;
+          break;
+        }
+        
+      }
+
+      cuadrado auxcolbox = enemys[i].colbox;
+      auxcolbox.x1 += enemys[i].vx;
+      auxcolbox.x2 += enemys[i].vx;
+      if(ColPlatforms(auxcolbox)){
+        enemys[i].vx = - enemys[i].vx;
+        if(enemys[i].direction == 0)
+          enemys[i].direction = 1;
+        else
+          enemys[i].direction = 0;
+      }
+      auxcolbox = enemys[i].colbox;
+      auxcolbox.y1 += enemys[i].vy;
+      auxcolbox.y2 += enemys[i].vy;
+      if(ColPlatforms(auxcolbox))
+        enemys[i].vy = - enemys[i].vy;
+    
+  }
+}
+if(UfoTime<esat::Time())
+  UfoTime = esat::Time()+1000;
+}
+
+void EnemiesBehavior(){
+
+  switch(level_1){
+    case 0:
+    MeteoritesMovement();
+    break;
+    case 1:
+    BallsMovement();
+    break;
+    case 2:
+    RandMovement();
+    break;
+    case 3:
+    DartsMovement();
+    break;
+    case 4:
+    UfoMovement();
+    break;
+    case 5:
+    RandMovement();
+    break;
+    case 6:
+    MeteoritesMovement();
+    break;
+    case 7:
+    UfoMovement();
+    break;
+
+  }
+
+  
+
+}
+
+
 void EnemiesMovement(){
-	for(int i=0;i<k_current_enemies;i++){
-  if (!enemys[i].dead){
-		cuadrado auxcolbox = enemys[i].colbox;
-		auxcolbox.x1 += enemys[i].vx;
-		auxcolbox.x2 += enemys[i].vx;
-		if(ColPlatforms(auxcolbox)){
-			enemys[i].vx = - enemys[i].vx;
-			if(enemys[i].direction == 0)
-				enemys[i].direction = 1;
-			else
-				enemys[i].direction = 0;
-		}
-		auxcolbox = enemys[i].colbox;
-		auxcolbox.y1 += enemys[i].vy;
-		auxcolbox.y2 += enemys[i].vy;
-		if(ColPlatforms(auxcolbox)){
-			enemys[i].vy = - enemys[i].vy;
-
-		}
-		enemys[i].colbox.x1 += enemys[i].vx;
-		enemys[i].colbox.x2 += enemys[i].vx;
-		enemys[i].colbox.y1 += enemys[i].vy;
-		enemys[i].colbox.y2 += enemys[i].vy;
-	}
-
+  for(int i=0; i<k_current_enemies; i++){
+    if (!enemys[i].dead){
+      enemys[i].colbox.x1 += enemys[i].vx;
+      enemys[i].colbox.x2 += enemys[i].vx;
+      enemys[i].colbox.y1 += enemys[i].vy;
+      enemys[i].colbox.y2 += enemys[i].vy;
+    }
   }
 }
 
 void EnemiesLimits(){
 	for(int i=0;i<k_current_enemies;i++){
 		if(enemys[i].colbox.x1>1000){
-			enemys[i].colbox.x1 = -50;
-			enemys[i].colbox.x2 = 0;
-		}else if(enemys[i].colbox.x1<-50){
-			enemys[i].colbox.x1 = 1000;
-			enemys[i].colbox.x2 = 1050;
+			enemys[i].colbox.x1 -= 1000;
+			enemys[i].colbox.x2 -= 1000;
+		}else if(enemys[i].colbox.x1<0){
+			enemys[i].colbox.x1 += 1000;
+			enemys[i].colbox.x2 += 1000;
 		}
 	}
 }
 
-void EnemiesDead(){
-
+void EnemiesShoting(){
   for (int i = 0; i < k_current_enemies; ++i){
     for (int k = 0; k < current_shots; ++k){
 
       if (Col(enemys[i].colbox,shots[k].colbox) && !enemys[i].dead){
         enemys[i].dead = true;
         enemys[i].explodeanim = 0;
-
-        if(multiplayer && turn%2==1){
-          (player+1)->points+=enemys[i].points;
-        }else{
-          player->points+=enemys[i].points;
-        }
-
-      }else if (enemys[i].dead && enemys[i].explodeanim > 2){
-         enemys[i].color = rand()%4;
-         enemys[i].explodeanim = 0;
-         enemys[i].dead = false;
-         enemys[i].alive = false;
-       }
+      }
     }
   }
 }
+
+void EnemiesDead(){
+
+
+  for (int i = 0; i < k_current_enemies; ++i){
+    if (enemys[i].dead && enemys[i].explodeanim > 2){
+      enemys[i].color = rand()%4;
+      enemys[i].explodeanim = 0;
+      enemys[i].dead = false;
+      enemys[i].alive = false;
+    }
+  }
+}
+
 
 void DrawEnemies(int level){
 
   for (int i = 0; i < k_current_enemies; ++i){
     if (!enemys[i].dead){
       if(turn%2==0){
+        
         EnemySprite(enemys+i,level_1);
+        
       }else{
         EnemySprite(enemys+i,level_2);
       }
+      
       esat::DrawSprite((enemys[i].sprite[enemys[i].animation]), enemys[i].colbox.x1, enemys[i].colbox.y1);
+
       if (time_ % 5 ==0 && level < 3){
         ++enemys[i].animation %= 2;
       }else if (level == 3 || level == 6) enemys[i].animation = enemys[i].direction;
 
     }else {
+  
       esat::DrawSprite(explode[enemys[i].explodeanim], enemys[i].colbox.x1, enemys[i].colbox.y1);
+ 
       if (time_%10 == 0) ++enemys[i].explodeanim;
     }
   }
@@ -1230,12 +1543,15 @@ void ToNextLevel(spaceman *Player){
 
 
 void UpdateFrame(){
+
 	esat::DrawSprite(map,0,0);
   if (!player -> dead){
 	   esat::DrawSprite(*(player -> sprite + player -> animation) , player -> x, player -> y);
   } else esat::DrawSprite(explode[player -> explodeanim], player -> x, player -> y);
+
   if(turn%2==0){
     DrawEnemies(level_1);
+
     DrawShip(ex_level_1);
   }else{
     DrawEnemies(level_2);
@@ -1244,6 +1560,7 @@ void UpdateFrame(){
 	DrawShoots();
 	DrawItems();
 	DrawCol((*player).colbox);
+
 	DrawCol(platforms[0].colbox);
 	DrawCol(platforms[1].colbox);
 	DrawCol(platforms[2].colbox);
@@ -1427,6 +1744,8 @@ int esat::main(int argc, char **argv) {
   }
 	  Initiate();
 
+  UfoTime = esat::Time()+1000;
+
 
   while(esat::WindowIsOpened() && !esat::IsSpecialKeyDown(esat::kSpecialKey_Escape)) {
 	last_time = esat::Time();
@@ -1442,7 +1761,9 @@ int esat::main(int argc, char **argv) {
 	if(game_start && !nextlevel){
     EnemiesDead();
 		if(turn%2==0){
+     
       EnemiesSpawn(level_1);
+     
     }else{
       EnemiesSpawn(level_2);
     }
@@ -1463,12 +1784,18 @@ int esat::main(int argc, char **argv) {
         if (ex_level_2 == 0 || ex_level_2%4 ==0)
           Pieces(&rocket[1],&rocket[2]);
       }
-
+      EnemiesShoting();
+      
+      EnemiesBehavior();
+     
     	EnemiesMovement();
+    
     	EnemiesLimits();
+     
 
 		if(time_%250==0){
 			ItemSpawn();
+
 		}
 
 		UpdateFrame();
