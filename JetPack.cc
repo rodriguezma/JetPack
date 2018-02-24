@@ -445,6 +445,8 @@ void Initiate(){
   PlayerInit();
   player -> lives = 3;
   player -> points = 0;
+  (player+1) -> lives = 3;
+  (player+1) -> points = 0;
 
   //PLATAFORMAS
   platforms=(struct terreno*)malloc(5*sizeof(struct terreno));
@@ -906,7 +908,11 @@ void PlayerDead(spaceman *character){  //Colisiones jugador/enemigos
         --character -> lives;
       }
       if(multiplayer){
-        turn++;
+        if(turn%2==0 && ((character+1)->lives!=0)){
+          turn++;
+        } else if(turn%2==1 && (character->lives!=0)){
+          turn++;
+        }
       }
     }
   }
@@ -1176,11 +1182,18 @@ void DrawShip(int level){
 
 void GameOver(spaceman *Player){
 
-	if (Player -> lives <= 0 && !Player -> dead){
+	if (Player -> lives <= 0 && !Player -> dead && !multiplayer){
 		game_start = false;
     SpriteShipLevel(ex_level_1);
     Initiate();
   }
+
+  if(multiplayer && (Player -> lives <= 0 && !Player -> dead) && ((Player+1) -> lives <= 0 && !(Player+1) -> dead)){
+      game_start =false;
+      SpriteShipLevel(ex_level_2);
+      Initiate();
+    }
+
 }
 
 bool NextLevel(spaceman *Player){
@@ -1194,6 +1207,8 @@ bool NextLevel(spaceman *Player){
 
 
 void ToNextLevel(spaceman *Player){
+
+  int sc1,sc2,lv1,lv2;
 
   if (nextlevel){
     rocket[0].colbox.y1 -= (Player -> vy *rocket[0].dir);
@@ -1218,11 +1233,23 @@ void ToNextLevel(spaceman *Player){
     nextlevel=false;
     rocket[0].dir=1;
     rocket[0].fuel=0;
+    sc1=Player->points;
+    lv1=Player->lives;
+    sc2=(Player+1)->points;
+    lv2=(Player+1)->lives;
     ++level_1%=8;
+    ++level_2%=8;
     ++ex_level_1%=16;
+    ++ex_level_2%=16;
     SpriteEnemyReserve(level_1);
+    SpriteEnemyReserve(level_2);
     SpriteShipLevel(ex_level_1);
+    SpriteShipLevel(ex_level_2);
     Initiate();
+    Player->points=sc1;
+    Player->lives=lv1;
+    (Player+1)->points=sc2;
+    (Player+1)->lives=lv2;
   }
 
 }
@@ -1370,7 +1397,7 @@ void Interface(spaceman *Player){
       esat::DrawText(920,70,score2);
     }else if((Player+1)->points<100){
       esat::DrawText(845,70,"0000");
-      esat::DrawText(915,70,score2);
+      esat::DrawText(905,70,score2);
     }else if((Player+1)->points<1000){
       esat::DrawText(845,70,"000");
       esat::DrawText(890,70,score2);
@@ -1383,6 +1410,8 @@ void Interface(spaceman *Player){
     }else{
       esat::DrawText(845,70,score2);
     }
+  }else{
+    esat::DrawText(845,70,"000000");
   }
 
 	esat::DrawSetFillColor(255,255,255);
@@ -1479,7 +1508,7 @@ int esat::main(int argc, char **argv) {
 
   ToNextLevel(player);
 
-    esat::DrawEnd();
+  esat::DrawEnd();
 
 	do{
     current_time = esat::Time();
