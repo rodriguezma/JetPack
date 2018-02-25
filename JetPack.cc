@@ -1141,7 +1141,6 @@ void InitCrosses(enemigos *marcianito){
 }
 
 void InitSpaceShips(enemigos *marcianito){
-
   marcianito -> colbox.x2 = marcianito -> colbox.x1 + 51;
   marcianito -> colbox.y2 = marcianito -> colbox.y1 + 41;
 
