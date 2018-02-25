@@ -13,7 +13,7 @@ esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
 esat::SpriteHandle *ship=NULL, *shipieces=NULL, *turbo;
 
-int level_1=6; // Nivel Enemigo (0-7)
+int level_1=0; // Nivel Enemigo (0-7)
 int level_2=0; // Nivel Enemigo (0-7)
 int ex_level_1=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 int ex_level_2=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
@@ -50,6 +50,7 @@ struct spaceman *player = NULL;
 struct disparos{
   float x,y;
   cuadrado colbox;
+  unsigned char r,g,b;
   int width,v;
   int direction;
 };
@@ -423,8 +424,8 @@ void PlayerInit(){
   player -> animation = 0;
   player -> dead = false;
   player -> explodeanim = 0;
-  player -> vx = 10;
-  player -> vy = 6;
+  player -> vx = 6;
+  player -> vy = 4;
   player -> colbox = {500,545,642,715};
 
   if(multiplayer){
@@ -508,6 +509,16 @@ void DrawCol(cuadrado colbox){
 
 bool Col (cuadrado colbox1, cuadrado colbox2){
 	if(colbox1.x2 < colbox2.x1 || colbox1.x1 > colbox2.x2)
+		return false;
+	else if(colbox1.y2 < colbox2.y1 || colbox1.y1 > colbox2.y2)
+		return false;
+	else{
+		return true;
+	}
+}
+
+bool ShootCol (cuadrado colbox1, cuadrado colbox2){
+	if(colbox1.x1 > colbox2.x1 || colbox1.x2 < colbox2.x2)
 		return false;
 	else if(colbox1.y2 < colbox2.y1 || colbox1.y1 > colbox2.y2)
 		return false;
@@ -743,16 +754,25 @@ void EnemySprite (enemigos *Tmarcianos, int level){
 }
 
 void Shot (esat::SpecialKey key){
-	if (esat::IsSpecialKeyDown(key)){
+	if (esat::IsSpecialKeyDown(key) && current_shots <4){
 
 		current_shots++;
 		shots = (disparos*)realloc(shots,sizeof(disparos)*current_shots);
 		disparos *auxshot = shots + (current_shots-1);
 
+    (*auxshot).r = rand()%(155)+100;
+    (*auxshot).g = rand()%(155)+100;
+    (*auxshot).b = rand()%(155)+100;
 		(*auxshot).direction = (*player).direction;
-		(*auxshot).colbox.x1 = (*player).x;
-		(*auxshot).colbox.y1 = (*player).y + ((esat::SpriteHeight(player->sprite[player -> animation]))/2);
-		(*auxshot).colbox.x2 = (*auxshot).colbox.x1 + 50;
+    if ((*auxshot).direction > 0){
+		  (*auxshot).colbox.x1 = (*player).x+122;
+      (*auxshot).colbox.x2 = (*auxshot).colbox.x1 - 50;
+    }else{
+       (*auxshot).colbox.x1 = (*player).x-70;
+       (*auxshot).colbox.x2 = (*auxshot).colbox.x1 + 50;
+    }
+		(*auxshot).colbox.y1 = (*player).y + 37;
+
 		(*auxshot).colbox.y2 = (*auxshot).colbox.y1 + 10;
 
 	}
@@ -764,23 +784,37 @@ void ShotsMovement (){
 	for(int i=0;i<current_shots;i++){
 		switch((*auxshot).direction){
 			case 0:
-				(*auxshot).colbox.x1 -=10;
-				(*auxshot).colbox.x2 -=10;
+				(*auxshot).colbox.x1 -=30;
+        if (((*auxshot).colbox.x2 - (*auxshot).colbox.x1) > 300)
+				  (*auxshot).colbox.x2 -=20;
 				break;
 			case 1:
-				(*auxshot).colbox.x1 +=10;
-				(*auxshot).colbox.x2 +=10;
+				(*auxshot).colbox.x1 +=30;
+        if (((*auxshot).colbox.x1 - (*auxshot).colbox.x2) > 300)
+				  (*auxshot).colbox.x2 +=20;
 				break;
 		}
 		auxshot++;
 	}
+
+}
+
+void ShotLimits(){
+  if (current_shots > 0){
+    disparos *auxshot = shots;
+    if ((auxshot[current_shots-1].colbox.x2 < 0) ||
+     (auxshot[current_shots-1].colbox.x2 > 1000)){
+       current_shots = 0;
+     }
+   }
 }
 
 void DrawShoots (){
 	disparos *auxshot = shots;
-	esat::DrawSetStrokeColor(255,255,255);
+
 	esat::DrawSetFillColor(255,255,255);
 	for(int i=0;i<current_shots;i++){
+    esat::DrawSetStrokeColor((*auxshot).r,(*auxshot).g,(*auxshot).b,255);
 		esat::DrawLine((*auxshot).colbox.x1 , (*auxshot).colbox.y1 + 5, (*auxshot).colbox.x2 , (*auxshot).colbox.y1 + 5);
 		auxshot++;
 	}
@@ -1442,6 +1476,11 @@ void EnemiesShoting(){
       if (Col(enemys[i].colbox,shots[k].colbox) && !enemys[i].dead){
         enemys[i].dead = true;
         enemys[i].explodeanim = 0;
+
+      }else if (shots[k].direction > 0 &&
+      ShootCol(enemys[i].colbox,shots[k].colbox) && !enemys[i].dead){
+        enemys[i].dead = true;
+        enemys[i].explodeanim = 0;
       }
     }
   }
@@ -1506,12 +1545,16 @@ void GameOver(spaceman *Player){
 
 	if (Player -> lives <= 0 && !Player -> dead && !multiplayer){
 		game_start = false;
+    level_1 = 0;
+    ex_level_1 = 0;
     SpriteShipLevel(ex_level_1);
     Initiate();
   }
 
   if(multiplayer && (Player -> lives <= 0 && !Player -> dead) && ((Player+1) -> lives <= 0 && !(Player+1) -> dead)){
       game_start =false;
+      level_2 = 0;
+      ex_level_2 = 0;
       SpriteShipLevel(ex_level_2);
       Initiate();
     }
@@ -1555,6 +1598,8 @@ void ToNextLevel(spaceman *Player){
     nextlevel=false;
     rocket[0].dir=1;
     rocket[0].fuel=0;
+    current_shots = 0;
+    ++Player -> lives;
     sc1=Player->points;
     lv1=Player->lives;
     sc2=(Player+1)->points;
@@ -1595,18 +1640,17 @@ void UpdateFrame(){
   }
 	DrawShoots();
 	DrawItems();
-	DrawCol((*player).colbox);
-
-	DrawCol(platforms[0].colbox);
-	DrawCol(platforms[1].colbox);
-	DrawCol(platforms[2].colbox);
-	DrawCol(platforms[3].colbox);
-  DrawCol(rocket[0].colbox);
-  //DrawCol(rocket[1].colbox);
-
-	for(int i=0;i<k_current_enemies;i++){
-		DrawCol(enemys[i].colbox);
-	}
+	// DrawCol((*player).colbox);
+  //
+	// DrawCol(platforms[0].colbox);
+	// DrawCol(platforms[1].colbox);
+	// DrawCol(platforms[2].colbox);
+	// DrawCol(platforms[3].colbox);
+  // DrawCol(rocket[0].colbox);
+  //
+	// for(int i=0;i<k_current_enemies;i++){
+	// 	DrawCol(enemys[i].colbox);
+	// }
 
 }
 
@@ -1765,7 +1809,7 @@ void Interface(spaceman *Player){
 int esat::main(int argc, char **argv) {
 
   double current_time,last_time;
-  unsigned char fps=25;
+  unsigned char fps=45;
   srand(time(NULL));
 
   esat::WindowInit(windowx,windowy);
@@ -1815,6 +1859,7 @@ int esat::main(int argc, char **argv) {
       PlayerDead(player);
     	Shot(esat::kSpecialKey_Space);
     	ShotsMovement();
+      ShotLimits();
 
       if(turn%2==0){
         if (ex_level_1 == 0 || ex_level_1%4 ==0)
