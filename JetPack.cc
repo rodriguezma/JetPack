@@ -13,7 +13,7 @@ esat::SpriteHandle *playerwalk, *playerfly;
 esat::SpriteHandle *martians;
 esat::SpriteHandle *ship=NULL, *shipieces=NULL, *turbo;
 
-int level_1=2; // Nivel Enemigo (0-7)
+int level_1=6; // Nivel Enemigo (0-7)
 int level_2=0; // Nivel Enemigo (0-7)
 int ex_level_1=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
 int ex_level_2=0; //Nivel nave (0-15)/ Cada 4 niveles se divide en piezas
@@ -1132,7 +1132,7 @@ void InitCrosses(enemigos *marcianito){
 
 void InitSpaceShips(enemigos *marcianito){
   
-  marcianito -> colbox.x2 = marcianito -> colbox.x2 + 51;
+  marcianito -> colbox.x2 = marcianito -> colbox.x1 + 51;
   marcianito -> colbox.y2 = marcianito -> colbox.y1 + 41;
 
   marcianito -> vy = rand()%3 - 1;
