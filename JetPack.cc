@@ -1486,7 +1486,7 @@ void EnemiesShoting(){
   }
 }
 
-void EnemiesDead(){
+void EnemiesDead(spaceman *Player){
 
 
   for (int i = 0; i < k_current_enemies; ++i){
@@ -1495,6 +1495,11 @@ void EnemiesDead(){
       enemys[i].explodeanim = 0;
       enemys[i].dead = false;
       enemys[i].alive = false;
+      if(multiplayer && turn%2!=0){
+        (Player+1)->points+=enemys[i].points;
+      }else{
+        Player->points+=enemys[i].points;
+      }
     }
   }
 }
@@ -1549,6 +1554,7 @@ void GameOver(spaceman *Player){
     ex_level_1 = 0;
     SpriteShipLevel(ex_level_1);
     Initiate();
+    turn=0;
   }
 
   if(multiplayer && (Player -> lives <= 0 && !Player -> dead) && ((Player+1) -> lives <= 0 && !(Player+1) -> dead)){
@@ -1557,6 +1563,7 @@ void GameOver(spaceman *Player){
       ex_level_2 = 0;
       SpriteShipLevel(ex_level_2);
       Initiate();
+      turn=0;
     }
 
 }
@@ -1809,7 +1816,7 @@ void Interface(spaceman *Player){
 int esat::main(int argc, char **argv) {
 
   double current_time,last_time;
-  unsigned char fps=45;
+  unsigned char fps=60;
   srand(time(NULL));
 
   esat::WindowInit(windowx,windowy);
@@ -1842,7 +1849,7 @@ int esat::main(int argc, char **argv) {
     esat::DrawClear(0,0,0);
 
 	if(game_start && !nextlevel){
-    EnemiesDead();
+    EnemiesDead(player);
 		if(turn%2==0){
 
       EnemiesSpawn(level_1);
